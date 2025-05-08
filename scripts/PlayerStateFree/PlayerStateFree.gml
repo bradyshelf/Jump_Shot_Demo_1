@@ -152,7 +152,9 @@ x = x + hsp;
 
 
 // Vertical Collision
-if sprite_index!= groundpound{
+
+
+if (!groundpounding){
 if (place_meeting(x, y + vsp, oWall))  {
     while (!place_meeting(x, y + sign(vsp), oWall)) {
         y = y + sign(vsp);
@@ -163,6 +165,7 @@ if (place_meeting(x, y + vsp, oWall))  {
 	
 	
 }
+
 
 if (place_meeting(x, y+vsp, oWall)) {
     // On the ground: stop vertical movement if hitting the other player
@@ -190,30 +193,6 @@ if (place_meeting(x, y+vsp, oWall)) {
 
 
 
-}else{
-	    if ( place_meeting(x, y + vsp, enemyplayer)) {
-        var dir = sign(vsp);
-        while (!place_meeting(x, y + dir, enemyplayer)) {
-            y += dir;
-        }
-		
-		
-		is_kicking= false;
-		groundpounding = false;
-       screenshake(vsp/3,vsp/3);
-         vsp = -min(vsp*0.75, 37);
-		enemyplayer.hp -= 5;
-		enemyplayer.flash = 4;
-		
-		if place_meeting(enemyplayer.x, enemyplayer.y, oWall){
-		enemyplayer.vsp += vsp/1.5;
-	
-		}else{
-			enemyplayer.vsp -= vsp;
-		
-		}
-    }
-	
 }
 
 
@@ -235,7 +214,7 @@ if (hsp != 0) {
 // Track falling
 if (vsp > 4) was_falling = true;
 
-if (!place_meeting(x, y + 20, oWall)) {
+if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
     // Airborne
     if (key_kick && key_down && !is_kicking) {
         is_kicking = true;
@@ -281,7 +260,7 @@ if (!place_meeting(x, y + 20, oWall)) {
 
     if (groundpounding) {
     // Landed after a ground pound
- if vsp > 0 && !place_meeting(x, y+20, enemyplayer){
+ if vsp > 0{
 	 
 var pitch = random_range(.8, 1.2); // Slightly vary the pitch
 	 	 if !audio_is_playing(sndThud){
@@ -294,8 +273,33 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
     audio_sound_pitch(snd_id2, pitch);
 	 }
 	 
-	  screenshake(vsp/5,vsp/5);
+
+ if ( place_meeting(x, y + 20, enemyplayer)) {
+
+       screenshake(vsp/3,vsp/3);
+         vsp = -min(vsp*0.75, 37);
+		enemyplayer.hp -= 5;
+		enemyplayer.flash = 4;
+		
+		if enemyplayer.vsp = 0 {
+		enemyplayer.vsp +=vsp/1.75;
+		//enemyplayer.vsp = -abs(vsp / 1.5);
+		}else{
+	
+			enemyplayer.vsp -= vsp;
+			
+		
+		}
+		
+				is_kicking= false;
+		groundpounding = false;
+    }
+	
+	else{
+		
+			  screenshake(vsp/5,vsp/5);
         vsp = -min(vsp*0.75, 37); // Bounce up but cap the bounce speed to -20
+	}
  }
 
     

@@ -1,6 +1,6 @@
 state = PlayerStateFree;
 //MOVEMENT//
-
+groundpound_has_hit = false;
 run = sShoeRun
 jump = sShoeJump
 kick = sShoeKick

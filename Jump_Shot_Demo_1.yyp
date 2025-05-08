@@ -51,7 +51,6 @@
     {"id":{"name":"Menu","path":"rooms/Menu/Menu.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
     {"id":{"name":"PlayerStateFree","path":"scripts/PlayerStateFree/PlayerStateFree.yy",},},
-    {"id":{"name":"PlayerStateGP","path":"scripts/PlayerStateGP/PlayerStateGP.yy",},},
     {"id":{"name":"screenshake","path":"scripts/screenshake/screenshake.yy",},},
     {"id":{"name":"SlideTransition","path":"scripts/SlideTransition/SlideTransition.yy",},},
     {"id":{"name":"HitFlashBlue","path":"shaders/HitFlashBlue/HitFlashBlue.yy",},},

@@ -9,7 +9,7 @@ var select_sound = sndPush;
 // Menu vertical layout values
 var spacing = menu_itemheight * .8;
 var total_menu_height = spacing * menu_items;
-var start_y = gui_height / 2 - (total_menu_height / 2) + 110;
+var start_y = gui_height / 2 - (total_menu_height / 2) + 100;
 
 // Easing menu x position
 menu_x += (menu_x_target - menu_x) / menu_speed;
@@ -84,7 +84,7 @@ if (menu_control)
 }
 
 // After menu has moved off-screen, trigger action
-if ((menu_x > gui_width + 145) && (menu_committed != -1))
+if ((menu_x > gui_width + 105) && (menu_committed != -1))
 {
     switch (menu_committed)
     {

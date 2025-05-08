@@ -6,7 +6,7 @@ var screen_center_x = display_get_gui_width() / 2;
 var screen_center_y = display_get_gui_height() / 2;
 
 // Total height of the menu
-var total_menu_height = menu_itemheight * .8 * menu_items;
+var total_menu_height = menu_itemheight * 1 * menu_items;
 
 // Adjust the starting Y to center the whole menu
 var start_y = screen_center_y - (total_menu_height / 2) + 125;
@@ -36,7 +36,7 @@ for (var i = 0; i < menu_items; i++)
     }
 
     var xx = screen_center_x;
-    var yy = start_y + (menu_itemheight * .8* i);
+    var yy = start_y + (menu_itemheight * 1* i);
 
     draw_set_font(font_to_use);
 

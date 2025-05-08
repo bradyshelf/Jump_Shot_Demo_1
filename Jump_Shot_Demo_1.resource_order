@@ -30,7 +30,6 @@
     {"name":"oWall","order":1,"path":"objects/oWall/oWall.yy",},
     {"name":"Menu","order":1,"path":"rooms/Menu/Menu.yy",},
     {"name":"PlayerStateFree","order":2,"path":"scripts/PlayerStateFree/PlayerStateFree.yy",},
-    {"name":"PlayerStateGP","order":3,"path":"scripts/PlayerStateGP/PlayerStateGP.yy",},
     {"name":"screenshake","order":1,"path":"scripts/screenshake/screenshake.yy",},
     {"name":"HitFlashRed","order":1,"path":"shaders/HitFlashRed/HitFlashRed.yy",},
     {"name":"sndGymSong","order":4,"path":"sounds/sndGymSong/sndGymSong.yy",},
