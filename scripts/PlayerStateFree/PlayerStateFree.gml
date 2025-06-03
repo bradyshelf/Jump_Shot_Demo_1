@@ -10,11 +10,7 @@ var max_speed = 12;  // Maximum horizontal speed
 if (hascontrol) {
 
 	//keyboard input check
-	var key_left_kb = keyboard_check(vk_left) || keyboard_check(ord("A"));
-    var key_right_kb = keyboard_check(vk_right) || keyboard_check(ord("D"));
-    var key_jump_kb = keyboard_check(vk_space) || keyboard_check(ord("W"));
-    var key_down_kb = keyboard_check(vk_down) || keyboard_check(ord("S"));
-	var key_kick_kb = mouse_check_button_pressed(mb_left);
+
 	
 	//gamepad input check
     var key_left_gp = gamepad_axis_value(gamepad_index, gp_axislh) < -0.5;
@@ -24,11 +20,11 @@ if (hascontrol) {
     var key_kick_gp = gamepad_button_check_pressed(gamepad_index, gp_face3);
 	
     // cobiniation of gamepad and keyboard input
-    key_left = key_left_kb || key_left_gp;
-    key_right = key_right_kb || key_right_gp;
-    key_jump = key_jump_kb || key_jump_gp;
-	key_down = key_down_kb || key_down_gp;
-	key_kick = key_kick_kb || key_kick_gp;
+    key_left =  key_left_gp;
+    key_right =  key_right_gp;
+    key_jump = key_jump_gp;
+	key_down =  key_down_gp;
+	key_kick = key_kick_gp;
 } else {
     key_right = 0;
     key_left = 0;
@@ -191,7 +187,6 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
 
 } else {
     // On the ground
-
     if (groundpounding) {
     // Landed after a ground pound
  if vsp > 0{
@@ -206,8 +201,7 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
     var snd_id2 = audio_play_sound(sndThud, 1, false);
     audio_sound_pitch(snd_id2, pitch);
 	 }
-	 
-
+	
  if ( place_meeting(x, y + 20, enemyplayer)) {
 
         screenshake(vsp/3,vsp/3);
@@ -221,8 +215,6 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
 		}else{
 	
 			enemyplayer.vsp -= vsp;
-			
-		
 		}
 		
 		is_kicking= false;
@@ -234,8 +226,7 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
         vsp = -min(vsp*0.75, 37); // Bounce up but cap the bounce speed to -20
 	}
  }
-
-    
+ 
     is_kicking = false;
     groundpounding = false;
     image_speed = 1;

@@ -1,3 +1,16 @@
+if gamepad_is_connected(4) && gamepad_is_connected(0){
+	gamepad_index = 0
+}
+
+if gamepad_is_connected(4) && gamepad_is_connected(5){
+	gamepad_index = 4
+}
+if gamepad_is_connected(1) && gamepad_is_connected(0){
+	gamepad_index = 0
+} 
+
+
+//gamepad_index = 4
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;

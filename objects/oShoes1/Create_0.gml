@@ -1,14 +1,26 @@
+if gamepad_is_connected(4) && gamepad_is_connected(0){
+	gamepad_index = 0
+}
+
+if gamepad_is_connected(4) && gamepad_is_connected(5){
+	gamepad_index = 4
+}
+if gamepad_is_connected(1) && gamepad_is_connected(0){
+	gamepad_index = 0
+}
+//gamepad_index = 4
+
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;
-run = sShoeRun
-jump = sShoeJump
-kick = sShoeKick
-idle = sShoeIdle
-wallslide = sShoeWallSlide
+run = sShoeRun_1
+jump = sShoeJump_1
+kick = sShoeKick_1
+idle = sShoeIdle_1
+wallslide = sShoeWallSlide_1
 player = oShoes1
 enemyplayer = oShoes2
-groundpound = sShoeGroundPound
+groundpound = sShoeGroundPound_1
 
 
 groundpounding = false;

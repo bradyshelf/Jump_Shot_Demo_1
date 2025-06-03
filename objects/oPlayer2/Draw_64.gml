@@ -23,6 +23,6 @@ if (instance_exists(oPlayer2)) {
     // Reset color
     draw_set_color(c_white);
 
-
+ draw_text(1000, 100, gamepad_index)
     
 }
