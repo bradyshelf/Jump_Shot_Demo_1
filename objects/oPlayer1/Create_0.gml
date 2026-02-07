@@ -10,6 +10,7 @@ if gamepad_is_connected(4) && gamepad_is_connected(5){
 if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 0
 } 
+slope = false;
 roll_threshold = 0; // minimum speed to initiate roll
 is_rolling = false;
 roll_speed = 0;
@@ -34,6 +35,7 @@ is_kicking=false;
 just_kicked = false;
 was_falling = false
 landing_timer=0
+last_hdir = 1; // Default facing right
 
 
 hp = 100;

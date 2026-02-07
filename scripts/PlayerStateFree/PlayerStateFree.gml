@@ -1,4 +1,10 @@
 function PlayerStateFree(){
+	
+	if place_meeting(x,y,oSlope){
+		slope = true;
+	}else{
+		slope = false;
+	}
 	if hp <= 0{		
 		instance_destroy();
 	}	
@@ -37,7 +43,7 @@ if (hascontrol){
 }
 
 // ======= ROLL START =======
-if (!is_rolling && place_meeting(x, y + 20, oWall) && key_roll && abs(hsp) >= roll_threshold) {
+if (!is_rolling && (place_meeting(x, y + 20, oWall)||place_meeting(x, y + 20, oSlope) ) && key_roll && abs(hsp) >= roll_threshold) {
     is_rolling = true;
     roll_speed = hsp*2;        // inherit current momentum
     roll_direction = sign(hsp); // lock direction
@@ -47,13 +53,86 @@ if (!is_rolling && place_meeting(x, y + 20, oWall) && key_roll && abs(hsp) >= ro
 }
 
 // ======= ROLLING =======
+// ======= START ROLL =======
+if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, oSlope)) && key_roll && abs(hsp) >= roll_threshold) {
+    is_rolling = true;
+    roll_speed = hsp * 2;          // inherit momentum
+    roll_direction = sign(hsp);    // lock direction
+    sprite_index = roll;
+    image_index = 0;
+    image_speed = 1;
+}
+
+// ======= ROLLING LOGIC =======
 if (is_rolling) {
 
-    // Apply roll movement
-    hsp = roll_speed;
-    x += hsp;
+    // ======= APPLY GRAVITY =======
+    vsp += grv;
 
-    // Smooth deceleration
+    // Vertical collision (falling)
+    if (vsp > 0) {
+        if (place_meeting(x, y + vsp, oWall)) {
+            while (!place_meeting(x, y + 1, oWall)) {
+                y += 1;
+            }
+            vsp = 0;
+        } else {
+            y += vsp;
+        }
+    }
+    // Vertical collision (rising)
+    else if (vsp < 0) {
+        if (place_meeting(x, y + vsp, oWall)) {
+            while (!place_meeting(x, y - 1, oWall)) {
+                y -= 1;
+            }
+            vsp = 0;
+        } else {
+            y += vsp;
+        }
+    }
+
+    // ======= HORIZONTAL ROLL MOVEMENT (Slope-Aware) =======
+    var target_x = x + roll_speed;
+    var target_y = y;
+
+    // Slope adjustment at the target position
+    if (place_meeting(target_x, target_y + 1, oSlope)) {
+        while (place_meeting(target_x, target_y, oSlope)) {
+            target_y -= 1; // move up until not inside slope
+        }
+    }
+
+    // Wall collision at slope-adjusted position
+    if (place_meeting(target_x, target_y, oWall)) {
+        // Move as close as possible
+        while (!place_meeting(x + roll_direction, y, oWall)) {
+            x += roll_direction;
+        }
+        hsp = 0;
+        roll_speed = 0;
+        is_rolling = false;
+    } else {
+        // Commit movement
+        x = target_x;
+        y = target_y;
+        hsp = roll_speed;
+    }
+
+    // ======= ENEMY COLLISION =======
+    if (place_meeting(x + hsp, y, enemyplayer)) {
+        while (!place_meeting(x + sign(hsp), y, enemyplayer)) {
+            x += sign(hsp);
+        }
+        roll_speed = -hsp;
+        enemyplayer.hsp = -hsp;
+    }
+
+    // ======= SLOPE FLAG =======
+    slope = place_meeting(x, y + 1, oSlope);
+    if (slope) SlopeAdjust2();
+
+    // ======= DECELERATION =======
     if (roll_speed > 0) {
         roll_speed -= roll_decel;
         if (roll_speed < 0) roll_speed = 0;
@@ -62,40 +141,21 @@ if (is_rolling) {
         if (roll_speed > 0) roll_speed = 0;
     }
 
-    // Cancel roll if player jumps
+    // ======= CANCEL ROLL =======
     if (key_jump) {
         is_rolling = false;
-        vsp = -20; // normal jump
+        vsp = -20; // jump normally
     }
-
-    // Stop roll if hitting wall
-    if (place_meeting(x + hsp, y, oWall)) {
-        while (!place_meeting(x + roll_direction, y, oWall)) {
-            x += roll_direction;
-        }
-        hsp = 0;
-        roll_speed = 0;
-        is_rolling = false;
-    }
-if (place_meeting(x + hsp, y, enemyplayer)) {
-    while (!place_meeting(x + sign(hsp), y, enemyplayer)) {
-        x = x + sign(hsp);
-    }
-    roll_speed = -hsp;
-	enemyplayer.hsp = -hsp
-}
-
-    // Stop roll if speed decays completely
-    if (key_roll==false) {
+    if (!key_roll) {
         is_rolling = false;
     }
 
-    // Update roll sprite animation
+    // ======= UPDATE SPRITE =======
     sprite_index = roll;
     image_speed = abs(hsp) / 8;
 }
 
-// ======= END ROLL LOGIC =======
+
 else{
 
 if (key_left) {
@@ -135,11 +195,34 @@ if (place_meeting(x, y + 20, oWall) && key_jump) {
 // Horizontal Collision
 //Wall
 if (place_meeting(x + hsp, y, oWall)) {
-    while (!place_meeting(x + sign(hsp), y, oWall)) {
-        x = x + sign(hsp);
+    var dir = sign(hsp);
+    var remaining = abs(hsp);
+
+    while (remaining > 0) {
+        // Tentative move
+        var next_x = x + dir;
+        var next_y = y;
+
+        // Adjust for slope at the next horizontal position
+        if (place_meeting(next_x, next_y + 1, oSlope)) {
+            while (place_meeting(next_x, next_y, oSlope)) {
+                next_y -= 1; // Move up along slope
+            }
+        }
+
+        // Stop if wall blocks the next position
+        if (place_meeting(next_x, next_y, oWall)) {
+            hsp = 0;
+            break;
+        }
+
+        // Commit movement
+        x = next_x;
+        y = next_y;
+        remaining -= 1;
     }
-    hsp = 0;
 }
+
 
 if (place_meeting(x + hsp, y, enemyplayer)) {
     while (!place_meeting(x + sign(hsp), y, enemyplayer)) {
@@ -165,7 +248,6 @@ x = x + hsp;
 
 
 
-
 // Vertical Collision
 if (!groundpounding){
 if (place_meeting(x, y + vsp, oWall))  {
@@ -173,6 +255,7 @@ if (place_meeting(x, y + vsp, oWall))  {
         y = y + sign(vsp);
     }
     vsp = 0;
+	
 }
 
 if (place_meeting(x, y+vsp, oWall)) {
@@ -183,6 +266,7 @@ if (place_meeting(x, y+vsp, oWall)) {
             y += dir;
         }
         vsp = 0;
+		slope = false
     }
 } else {
     if (vsp != 0 && place_meeting(x, y + vsp, enemyplayer)) {
@@ -205,6 +289,16 @@ if (place_meeting(x, y+vsp, oWall)) {
 //THIS SINGULAR PIECE OF CODE IS THE BACKBONE OF THIS GAME DO NOT DELETE
 y = y + vsp;
 
+
+
+if (place_meeting(x + hsp, y, oSlope)) {
+    while (!place_meeting(x + sign(hsp), y, oSlope)) {
+        x = x + sign(hsp);
+    }
+SlopeAdjust();
+slope = true
+}
+
 // ANIMATION LOGIC
 if (hsp != 0) {
     sprite_index = run;
@@ -213,7 +307,7 @@ if (hsp != 0) {
 // Track falling
 if (vsp > 4) was_falling = true;
 
-if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
+if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer &&  !place_meeting(x,y+20,oSlope)) {
     // Airborne
     if (key_kick && key_down&& !is_kicking) {
         is_kicking = true;
@@ -265,11 +359,27 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
             image_index = image_number - 1;
             image_speed = 0;
         }
-    } else {
+    } 
+	
+	else {
         // Normal jump/fall
+		if place_meeting(x,y+20,oSlope){
+			if (hsp != 0) {
+     sprite_index = run;
+	
+		image_speed = 1;
+}else{
+	    sprite_index = idle;
+}
+		
+			
+		}else{
+			
+		
         sprite_index = jump;
         image_speed = 0;
         image_index = (sign(vsp) > 0) ? 1 : 0;
+		}
     }
 
 } else {
@@ -333,7 +443,8 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
 
 if (hsp != 0) image_xscale = sign(hsp) *-.5;
 
-//wall slide
+//wall slide\
+
 if (place_meeting(x + 1, y, oWall) || place_meeting(x - 1, y, oWall))  {
     // Reduce horizontal speed to half to make jump easier? maybe take this out well see
     //hsp *= 0.5;
@@ -343,7 +454,7 @@ if (place_meeting(x + 1, y, oWall) || place_meeting(x - 1, y, oWall))  {
         vsp -= 0.115; // perfect fucking number
     }
 }
-
+if slope = false{
 if(place_meeting(x + 10, y, oWall)){
 	image_xscale = .5
 }
@@ -351,11 +462,11 @@ if(place_meeting(x + 10, y, oWall)){
 if (place_meeting(x - 10, y, oWall)){
 	image_xscale = -.5
 }
-
+}
 if (keyboard_check_pressed(vk_space) || gamepad_button_check_pressed(gamepad_index, gp_face1)) && (place_meeting(x + 20, y, oWall) || place_meeting(x - 20, y, oWall)) {
 
-	var wall_jump_speed = 15;  //  x Speed for the wall jump
-    var wall_jump_vspeed = -9;  // y speed for the wall jump
+	var wall_jump_speed = 50;  //  x Speed for the wall jump
+    var wall_jump_vspeed = -12;  // y speed for the wall jump
 
     // Determine the direction of the wall jump
     if (place_meeting(x + 20, y, oWall)) {
@@ -366,7 +477,7 @@ if (keyboard_check_pressed(vk_space) || gamepad_button_check_pressed(gamepad_ind
     vsp = wall_jump_vspeed;
 }
 
-
+}
 
 if sprite_index = run && hsp >= 0 {
 image_speed = hsp/8
@@ -374,6 +485,5 @@ image_speed = hsp/8
 
 if sprite_index = run && hsp <= 0{
 		image_speed = -hsp/8
-}
 }
 }

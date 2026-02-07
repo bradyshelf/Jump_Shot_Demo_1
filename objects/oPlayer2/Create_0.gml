@@ -9,11 +9,13 @@ if gamepad_is_connected(4) && gamepad_is_connected(5){
 if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 1
 }
+slope = false;
 roll_threshold = 0; // minimum speed to initiate roll
 is_rolling = false;
 roll_speed = 0;
 roll_accel = 1.5; // optional: acceleration while rolling
 roll_decel = 0.5; // optional: natural deceleration
+last_hdir = 1; // Default facing right
 
 state = PlayerStateFree;
 //MOVEMENT//

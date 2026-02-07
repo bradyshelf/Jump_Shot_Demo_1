@@ -100,8 +100,9 @@ if ((menu_x > gui_width + 60) && (menu_committed != -1))
             break;
 
         case 1:
-game_end();
 
+	 audio_stop_all()
+game_end();
     }
 }
 }
