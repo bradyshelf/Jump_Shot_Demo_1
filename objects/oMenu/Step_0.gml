@@ -1,3 +1,6 @@
+if (gamepad_is_connected(0)|| gamepad_is_connected(4)) && (gamepad_is_connected(1)|| gamepad_is_connected(5)) {
+
+
 // Center of GUI
 gui_width = display_get_gui_width();
 gui_height = display_get_gui_height();
@@ -9,7 +12,7 @@ var select_sound = sndPush;
 // Menu vertical layout values
 var spacing = menu_itemheight * .8;
 var total_menu_height = spacing * menu_items;
-var start_y = gui_height / 2 - (total_menu_height / 2) + 100;
+var start_y = gui_height / 2 - (total_menu_height / 2) + 40;
 
 // Easing menu x position
 menu_x += (menu_x_target - menu_x) / menu_speed;
@@ -83,8 +86,8 @@ if (menu_control)
     }
 }
 
-// After menu has moved off-screen, trigger action
-if ((menu_x > gui_width + 105) && (menu_committed != -1))
+
+if ((menu_x > gui_width + 60) && (menu_committed != -1))
 {
     switch (menu_committed)
     {
@@ -97,8 +100,8 @@ if ((menu_x > gui_width + 105) && (menu_committed != -1))
             break;
 
         case 1:
-            audio_play_sound(sndSelect, 1, false);
-            game_end();
-            break;
+game_end();
+
     }
+}
 }

@@ -7,7 +7,7 @@ var decel = 1;  // Deceleration rate
 var max_speed = 12;  // Maximum horizontal speed
 
 
-if (hascontrol) {
+if (hascontrol){
 
 	//keyboard input check
 
@@ -18,13 +18,16 @@ if (hascontrol) {
     var key_jump_gp = gamepad_button_check(gamepad_index, gp_face1);
     var key_down_gp = gamepad_axis_value(gamepad_index, gp_axislv) > 0.5;
     var key_kick_gp = gamepad_button_check_pressed(gamepad_index, gp_face3);
-	
+    var key_gp_gp = gamepad_button_check_pressed(gamepad_index, gp_face4);
+	  var key_roll_gp = gamepad_button_check(gamepad_index, gp_face2);
     // cobiniation of gamepad and keyboard input
     key_left =  key_left_gp;
     key_right =  key_right_gp;
     key_jump = key_jump_gp;
 	key_down =  key_down_gp;
 	key_kick = key_kick_gp;
+	key_gp = key_gp_gp;
+	key_roll =  key_roll_gp
 } else {
     key_right = 0;
     key_left = 0;
@@ -33,7 +36,67 @@ if (hascontrol) {
 	key_kick = 0;
 }
 
+// ======= ROLL START =======
+if (!is_rolling && place_meeting(x, y + 20, oWall) && key_roll && abs(hsp) >= roll_threshold) {
+    is_rolling = true;
+    roll_speed = hsp*2;        // inherit current momentum
+    roll_direction = sign(hsp); // lock direction
+    sprite_index = roll;
+    image_index = 0;
+    image_speed = 1;
+}
 
+// ======= ROLLING =======
+if (is_rolling) {
+
+    // Apply roll movement
+    hsp = roll_speed;
+    x += hsp;
+
+    // Smooth deceleration
+    if (roll_speed > 0) {
+        roll_speed -= roll_decel;
+        if (roll_speed < 0) roll_speed = 0;
+    } else if (roll_speed < 0) {
+        roll_speed += roll_decel;
+        if (roll_speed > 0) roll_speed = 0;
+    }
+
+    // Cancel roll if player jumps
+    if (key_jump) {
+        is_rolling = false;
+        vsp = -20; // normal jump
+    }
+
+    // Stop roll if hitting wall
+    if (place_meeting(x + hsp, y, oWall)) {
+        while (!place_meeting(x + roll_direction, y, oWall)) {
+            x += roll_direction;
+        }
+        hsp = 0;
+        roll_speed = 0;
+        is_rolling = false;
+    }
+if (place_meeting(x + hsp, y, enemyplayer)) {
+    while (!place_meeting(x + sign(hsp), y, enemyplayer)) {
+        x = x + sign(hsp);
+    }
+    roll_speed = -hsp;
+	enemyplayer.hsp = -hsp
+}
+
+    // Stop roll if speed decays completely
+    if (key_roll==false) {
+        is_rolling = false;
+    }
+
+    // Update roll sprite animation
+    sprite_index = roll;
+    image_speed = abs(hsp) / 8;
+}
+
+// ======= END ROLL LOGIC =======
+else{
 
 if (key_left) {
     hsp -= accel; //Accelerate
@@ -97,6 +160,12 @@ if (place_meeting(x + hsp, y, oBackboard)) {
 //THIS SINGULAR PIECE OF CODE IS THE BACKBONE OF THIS GAME DO NOT DELETE
 x = x + hsp;
 
+
+
+
+
+
+
 // Vertical Collision
 if (!groundpounding){
 if (place_meeting(x, y + vsp, oWall))  {
@@ -146,7 +215,7 @@ if (vsp > 4) was_falling = true;
 
 if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
     // Airborne
-    if (key_kick && key_down && !is_kicking) {
+    if (key_kick && key_down&& !is_kicking) {
         is_kicking = true;
         groundpounding = true; // <- Commit to the ground pound
         sprite_index = groundpound;
@@ -166,6 +235,24 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) {
     }
 
     if (is_kicking) {
+		 if ( place_meeting(x, y, enemyplayer)) {
+
+        screenshake(vsp/3,vsp/3);
+        vsp = -min(vsp*0.75, 37);
+		enemyplayer.hp -= 5;
+		enemyplayer.flash = 4;
+		
+		if enemyplayer.vsp = 0 {
+		enemyplayer.vsp +=vsp/1.75;
+		//enemyplayer.vsp = -abs(vsp / 1.5);
+		}else{
+	
+			enemyplayer.vsp -= vsp;
+		}
+		
+		is_kicking= false;
+		groundpounding = false;
+    }
         if (groundpounding) {
             // Committed to ground pound
             sprite_index = groundpound;
@@ -288,5 +375,5 @@ image_speed = hsp/8
 if sprite_index = run && hsp <= 0{
 		image_speed = -hsp/8
 }
-	
+}
 }

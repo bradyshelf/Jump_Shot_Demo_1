@@ -1,15 +1,17 @@
 {
-  "$GMSound":"",
+  "$GMSound":"v2",
   "%Name":"sndBounce",
   "audioGroupId":{
     "name":"audiogroup_default",
     "path":"audiogroups/audiogroup_default",
   },
   "bitDepth":1,
-  "bitRate":112,
+  "channelFormat":1,
   "compression":1,
+  "compressionQuality":3,
   "conversionMode":0,
   "duration":0.104438,
+  "exportDir":"",
   "name":"sndBounce",
   "parent":{
     "name":"Sounds",
@@ -20,6 +22,5 @@
   "resourceVersion":"2.0",
   "sampleRate":44100,
   "soundFile":"sndBounce.mp3",
-  "type":1,
   "volume":0.75,
 }

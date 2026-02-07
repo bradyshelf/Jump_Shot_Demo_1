@@ -1,9 +1,9 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"sPlayerJump",
   "bboxMode":0,
-  "bbox_bottom":813,
-  "bbox_left":910,
+  "bbox_bottom":1062,
+  "bbox_left":618,
   "bbox_right":1116,
   "bbox_top":413,
   "collisionKind":1,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"a16558c7-1ff7-4254-9ec0-94582fb763c7","name":"a16558c7-1ff7-4254-9ec0-94582fb763c7","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"7c48ab11-e681-4173-9e31-10f492e3d32c","name":"7c48ab11-e681-4173-9e31-10f492e3d32c","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"a16558c7-1ff7-4254-9ec0-94582fb763c7","name":"a16558c7-1ff7-4254-9ec0-94582fb763c7","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"7c48ab11-e681-4173-9e31-10f492e3d32c","name":"7c48ab11-e681-4173-9e31-10f492e3d32c","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

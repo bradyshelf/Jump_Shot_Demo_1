@@ -2,7 +2,7 @@
 
 if instance_exists(oPlayer1) && instance_exists(oPlayer2){
 var px1 = oPlayer1.x;
-var py1 = oPlayer1.y;
+var py1 = oPlayer1.y ;
 var px2 = oPlayer2.x;
 var py2 = oPlayer2.y;
 
@@ -24,7 +24,7 @@ global.smooth_mid_y = lerp(global.smooth_mid_y, target_mid_y, 0.025);
 var dist = point_distance(px1, py1, px2, py2);
 
 // === Zoom factor based on distance ===
-var zoom_target = clamp(lerp(0.75, 1.3, (dist - 400) / 500), 0.75, 1.3);
+var zoom_target = clamp(lerp(1, 1.3, (dist - 400) / 500), 1, 1.3);
 
 // === Smooth zoom interpolation ===
 zoom_factor = lerp(zoom_factor, zoom_target, 0.05);
@@ -39,9 +39,6 @@ var view_h = base_view_h * zoom_factor;
 var cam_target_x = global.smooth_mid_x - view_w * 0.5;
 var cam_target_y = global.smooth_mid_y - view_h * 0.5;
 
-// === Vertical bias scales with zoom (less when zoomed out) ===
-var vertical_bias = 100 * (1.3 - zoom_factor);
-cam_target_y -= vertical_bias;
 
 // === Clamp camera to stay in room bounds ===
 cam_target_x = clamp(cam_target_x, 0, room_width - view_w);
@@ -79,21 +76,21 @@ camera_set_view_size(cam, view_w, view_h);
 camera_set_view_pos(cam, shaken_x, shaken_y);
 
 // === Parallax Backgrounds (use clean base_x/y only) ===
-var z = zoom_factor; // for readability
+//var z = zoom_factor; // for readability
 
-if (layer_exists("BG1")) layer_x("BG1", base_x * 0.05);
-if (layer_exists("BG2")) layer_x("BG2", base_x * 0.1);
-if (layer_exists("BG3")) layer_x("BG3", base_x * 0.2);
-if (layer_exists("BG4")) layer_x("BG4", base_x * 0.3);
-if (layer_exists("BG5")) layer_x("BG5", base_x * 0.4);
+//if (layer_exists("BG1")) layer_x("BG1", base_x * 0.05);
+//if (layer_exists("BG2")) layer_x("BG2", base_x * 0.1);
+//if (layer_exists("BG3")) layer_x("BG3", base_x * 0.2);
+//if (layer_exists("BG4")) layer_x("BG4", base_x * 0.3);
+//if (layer_exists("BG5")) layer_x("BG5", base_x * 0.4);
 
-var b = 3;
-if (layer_exists("BG1")) layer_y("BG1", 1000 + base_y * 0.5 / b);
-if (layer_exists("BG2")) layer_y("BG2", 750 + base_y * 0.3 / b);
-if (layer_exists("BG3")) layer_y("BG3", 750 + base_y * 0.2 / b);
-if (layer_exists("BG4")) layer_y("BG4", 750 + base_y * 0.1 / b);
-if (layer_exists("BG5")) layer_y("BG5", 750 + base_y * 0.1 / b);
-}else{
+//var b = 3;
+//if (layer_exists("BG1")) layer_y("BG1", 1000 + base_y * 0.5 / b);
+//if (layer_exists("BG2")) layer_y("BG2", 750 + base_y * 0.3 / b);
+//if (layer_exists("BG3")) layer_y("BG3", 750 + base_y * 0.2 / b);
+//if (layer_exists("BG4")) layer_y("BG4", 750 + base_y * 0.1 / b);
+//if (layer_exists("BG5")) layer_y("BG5", 750 + base_y * 0.1 / b);
+//}else{
 	
 	
 }

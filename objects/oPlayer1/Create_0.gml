@@ -1,3 +1,5 @@
+
+
 if gamepad_is_connected(4) && gamepad_is_connected(0){
 	gamepad_index = 0
 }
@@ -8,8 +10,11 @@ if gamepad_is_connected(4) && gamepad_is_connected(5){
 if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 0
 } 
-
-
+roll_threshold = 0; // minimum speed to initiate roll
+is_rolling = false;
+roll_speed = 0;
+roll_accel = 1.5; // optional: acceleration while rolling
+roll_decel = 0.25; // optional: natural deceleration
 //gamepad_index = 4
 state = PlayerStateFree;
 //MOVEMENT//
@@ -22,7 +27,7 @@ wallslide = sPlayerWallSlide
 player = oPlayer1
 enemyplayer = oPlayer2
 groundpound = sPlayerGroundPound
-
+roll = sPlayer2Roll
 groundpounding = false;
 flash = 0;
 is_kicking=false;

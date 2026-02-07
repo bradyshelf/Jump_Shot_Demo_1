@@ -4,7 +4,7 @@ if (instance_exists(oPlayer1)) {
     // Draw the UI backdrop
     var ui_backdrop_x = 50;
     var ui_backdrop_y = 50;
-    draw_sprite(sUIBackdrop, 0, ui_backdrop_x, 50);
+    draw_sprite(sPlayerRoll, 0, ui_backdrop_x, 50);
 
     // Health bar dimensions
     var health_x = 100;
