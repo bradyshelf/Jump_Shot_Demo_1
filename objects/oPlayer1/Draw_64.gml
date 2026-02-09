@@ -15,7 +15,7 @@ if (instance_exists(oPlayer1)) {
     // Draw the health bar background (optional)
     draw_set_color(c_black);
     draw_rectangle(health_x - 2, health_y - 2, health_x + 250 + 2, health_y + 22, false);
- draw_text(100, 100, gamepad_index)
+//draw_text(100, 100, gamepad_index)
     // Draw the actual health bar (static green color)
     draw_set_color(c_blue); // Or any color you prefer
     draw_rectangle(health_x, health_y, health_x + health_width, health_y + health_height, false);

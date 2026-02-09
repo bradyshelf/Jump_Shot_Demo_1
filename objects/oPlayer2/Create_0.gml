@@ -1,14 +1,26 @@
 
+hascontrol = false;
+if hascontrol == false {
+		gamepad_index = -1
+	
+}
 
 if gamepad_is_connected(4) && gamepad_is_connected(0){
 	gamepad_index = 4
+		hascontrol = true
 }
 if gamepad_is_connected(4) && gamepad_is_connected(5){
 	gamepad_index = 5
+		hascontrol = true
 }
 if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 1
+		hascontrol = true
 }
+
+
+
+playerid = 2;
 slope = false;
 roll_threshold = 0; // minimum speed to initiate roll
 is_rolling = false;
@@ -37,7 +49,7 @@ was_falling = false
 landing_timer=0
 hp = 100;
 hp_max = hp;
-hascontrol = true
+
 hsp = 0;    
 vsp = 0;    
 grv = 0.6;  //gravity built in variable

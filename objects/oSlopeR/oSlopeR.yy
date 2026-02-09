@@ -1,17 +1,18 @@
 {
   "$GMObject":"",
-  "%Name":"oControllerDemand",
-  "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-  ],
+  "%Name":"oSlopeR",
+  "eventList":[],
   "managed":true,
-  "name":"oControllerDemand",
+  "name":"oSlopeR",
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",
     "path":"folders/Objects.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"oSlope",
+    "path":"objects/oSlope/oSlope.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -30,8 +31,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sControllerDemand",
-    "path":"sprites/sControllerDemand/sControllerDemand.yy",
+    "name":"sSlope",
+    "path":"sprites/sSlope/sSlope.yy",
   },
   "spriteMaskId":null,
   "visible":true,

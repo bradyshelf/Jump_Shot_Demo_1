@@ -1,4 +1,4 @@
-if (gamepad_is_connected(0)|| gamepad_is_connected(4)) && (gamepad_is_connected(1)|| gamepad_is_connected(5)) {
+//if (gamepad_is_connected(0)|| gamepad_is_connected(4)) && (gamepad_is_connected(1)|| gamepad_is_connected(5)) {
 
 
 // Center of GUI
@@ -105,4 +105,4 @@ if ((menu_x > gui_width + 60) && (menu_committed != -1))
 game_end();
     }
 }
-}
+//}

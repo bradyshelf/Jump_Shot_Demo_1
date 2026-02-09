@@ -1,5 +1,5 @@
 // --- ALIGNMENT SETTINGS ---
-if (gamepad_is_connected(0)|| gamepad_is_connected(4)) && (gamepad_is_connected(1)|| gamepad_is_connected(5)) {
+//if (gamepad_is_connected(0)|| gamepad_is_connected(4)) && (gamepad_is_connected(1)|| gamepad_is_connected(5)) {
 draw_set_halign(fa_left); // We manually center using string_width
 draw_set_valign(fa_bottom);
 
@@ -49,4 +49,4 @@ for (var i = 0; i < menu_items; i++)
     draw_set_color(col);
     draw_text(xx, yy, txt);
 }
-}
+//}

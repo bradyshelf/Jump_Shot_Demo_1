@@ -13,34 +13,68 @@ var decel = 1;  // Deceleration rate
 var max_speed = 12;  // Maximum horizontal speed
 
 
-if (hascontrol){
+if (hascontrol) {
 
-	//keyboard input check
+    // ===== GAMEPAD INPUT =====
+    var key_left_gp   = gamepad_axis_value(gamepad_index, gp_axislh) < -0.5;
+    var key_right_gp  = gamepad_axis_value(gamepad_index, gp_axislh) >  0.5;
+    var key_jump_gp   = gamepad_button_check(gamepad_index, gp_face1); // A / Cross
+    var key_down_gp   = gamepad_axis_value(gamepad_index, gp_axislv) > 0.5;
+    var key_kick_gp   = gamepad_button_check_pressed(gamepad_index, gp_face3); // X / Square
+    var key_gp_gp     = gamepad_button_check_pressed(gamepad_index, gp_face4); // Y / Triangle
+    var key_roll_gp   = gamepad_button_check(gamepad_index, gp_face2); // B / Circle
 
-	
-	//gamepad input check
-    var key_left_gp = gamepad_axis_value(gamepad_index, gp_axislh) < -0.5;
-    var key_right_gp = gamepad_axis_value(gamepad_index, gp_axislh) > 0.5;
-    var key_jump_gp = gamepad_button_check(gamepad_index, gp_face1);
-    var key_down_gp = gamepad_axis_value(gamepad_index, gp_axislv) > 0.5;
-    var key_kick_gp = gamepad_button_check_pressed(gamepad_index, gp_face3);
-    var key_gp_gp = gamepad_button_check_pressed(gamepad_index, gp_face4);
-	  var key_roll_gp = gamepad_button_check(gamepad_index, gp_face2);
-    // cobiniation of gamepad and keyboard input
-    key_left =  key_left_gp;
-    key_right =  key_right_gp;
-    key_jump = key_jump_gp;
-	key_down =  key_down_gp;
-	key_kick = key_kick_gp;
-	key_gp = key_gp_gp;
-	key_roll =  key_roll_gp
+
+        key_left  = key_left_gp;
+        key_right = key_right_gp;
+        key_jump  = key_jump_gp;
+        key_down  = key_down_gp;
+        key_kick  = key_kick_gp;
+        key_gp    = key_gp_gp;
+        key_roll  = key_roll_gp;
+    
+    
+    
+
 } else {
-    key_right = 0;
-    key_left = 0;
-    key_jump = 0;
-	key_down = 0;
-	key_kick = 0;
+	if playerid == 1{
+	  var key_left_kb   = keyboard_check(ord("A"));
+    var key_right_kb  = keyboard_check(ord("D"));
+    var key_jump_kb   = keyboard_check(vk_space) || keyboard_check_pressed(ord("W"));
+    var key_down_kb   = keyboard_check(ord("S"));
+    var key_roll_kb   = keyboard_check(ord("S")); // Roll with S (hold down)
+    var key_kick_kb   = keyboard_check_pressed(ord("E")); // Kick
+    var key_gp_kb     = keyboard_check_pressed(ord("E")) && keyboard_check(ord("S")); // E + Down = Ground Pound
+	
+
+		key_left  = key_left_kb;
+        key_right = key_right_kb;
+        key_jump  = key_jump_kb;
+        key_down  = key_down_kb;
+        key_kick  = key_kick_kb;
+        key_gp    = key_gp_kb;
+        key_roll  = key_roll_kb;
+	}
+if playerid == 2	{
+	var key_left_kb   = keyboard_check(vk_left);
+    var key_right_kb  = keyboard_check(vk_right);
+    var key_jump_kb   = keyboard_check(vk_up);
+    var key_down_kb   = keyboard_check(vk_down);
+    var key_roll_kb   = keyboard_check(vk_down); // Roll with S (hold down)
+    var key_kick_kb   = keyboard_check_pressed(ord("M")); // Kick
+    var key_gp_kb     = keyboard_check_pressed(ord("M")) && keyboard_check(vk_down); // E + Down = Ground Pound
+	
+
+		key_left  = key_left_kb;
+        key_right = key_right_kb;
+        key_jump  = key_jump_kb;
+        key_down  = key_down_kb;
+        key_kick  = key_kick_kb;
+        key_gp    = key_gp_kb;
+        key_roll  = key_roll_kb;
 }
+}
+
 
 // ======= ROLL START =======
 if (!is_rolling && (place_meeting(x, y + 20, oWall)||place_meeting(x, y + 20, oSlope) ) && key_roll && abs(hsp) >= roll_threshold) {
@@ -131,7 +165,19 @@ if (is_rolling) {
     // ======= SLOPE FLAG =======
     slope = place_meeting(x, y + 1, oSlope);
     if (slope) SlopeAdjust2();
+	
+if place_meeting(x, y + 1, oSlopeR){
 
+		roll_speed += oSlope.image_xscale* 1
+	
+	
+}
+if place_meeting(x, y + 1, oSlopeL){
+
+		roll_speed += oSlope.image_xscale* -1
+	
+	
+}
     // ======= DECELERATION =======
     if (roll_speed > 0) {
         roll_speed -= roll_decel;
@@ -463,7 +509,7 @@ if (place_meeting(x - 10, y, oWall)){
 	image_xscale = -.5
 }
 }
-if (keyboard_check_pressed(vk_space) || gamepad_button_check_pressed(gamepad_index, gp_face1)) && (place_meeting(x + 20, y, oWall) || place_meeting(x - 20, y, oWall)) {
+if key_jump && (place_meeting(x + 20, y, oWall) || place_meeting(x - 20, y, oWall)) {
 
 	var wall_jump_speed = 50;  //  x Speed for the wall jump
     var wall_jump_vspeed = -12;  // y speed for the wall jump
