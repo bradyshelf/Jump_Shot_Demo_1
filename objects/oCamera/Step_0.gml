@@ -76,21 +76,23 @@ camera_set_view_size(cam, view_w, view_h);
 camera_set_view_pos(cam, shaken_x, shaken_y);
 
 // === Parallax Backgrounds (use clean base_x/y only) ===
-//var z = zoom_factor; // for readability
+var z = zoom_factor; // for readability
 
-//if (layer_exists("BG1")) layer_x("BG1", base_x * 0.05);
-//if (layer_exists("BG2")) layer_x("BG2", base_x * 0.1);
-//if (layer_exists("BG3")) layer_x("BG3", base_x * 0.2);
-//if (layer_exists("BG4")) layer_x("BG4", base_x * 0.3);
-//if (layer_exists("BG5")) layer_x("BG5", base_x * 0.4);
+var zoom_adj = 1 / z; // smaller when zoomed in, larger when zoomed out
 
-//var b = 3;
-//if (layer_exists("BG1")) layer_y("BG1", 1000 + base_y * 0.5 / b);
-//if (layer_exists("BG2")) layer_y("BG2", 750 + base_y * 0.3 / b);
-//if (layer_exists("BG3")) layer_y("BG3", 750 + base_y * 0.2 / b);
-//if (layer_exists("BG4")) layer_y("BG4", 750 + base_y * 0.1 / b);
-//if (layer_exists("BG5")) layer_y("BG5", 750 + base_y * 0.1 / b);
-//}else{
+// horizontal parallax
+if (layer_exists("BG1")) layer_x("BG1", base_x * 0.1 * zoom_adj);
+if (layer_exists("BG2")) layer_x("BG2", base_x * 0.09 * zoom_adj);
+if (layer_exists("BG3")) layer_x("BG3", base_x * 0.08* zoom_adj);
+if (layer_exists("BG4")) layer_x("BG4", base_x * 0.05 * zoom_adj);
+if (layer_exists("BG5")) layer_x("BG5", base_x * 0.04 * zoom_adj);
+if (layer_exists("BG6")) layer_x("BG6", base_x * 0.01 * zoom_adj);
+if (layer_exists("BG7")) layer_x("BG7", base_x * 0.005 * zoom_adj);
+if (layer_exists("BG8")) layer_x("BG8", base_x * 0.005 * zoom_adj);
+
+}
+
+else{
 	
 	
 }

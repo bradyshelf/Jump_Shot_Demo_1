@@ -1,115 +1,88 @@
 if (instance_exists(oPlayer)) {
-    
-    // === Constants ===
-    var acceleration = 0.5;
-    var deceleration = 0.25;
-    var maxSpeed = 8.5;
-    var pursueDistance = 500; // Adjusted for better chase radius
-    var spd = 6;
-    var chase = 0; // Adjust if needed for offsetting targeting
-    var grv = 0.4;
-
-
-
-
-  
-        // === Enemy Movement Toward Player ===
-        if (place_meeting(x, y + 1, oWall)) {
-
-            var playerX = oPlayer.x + chase;
-            var playerY = oPlayer.y + chase;
-            var distToPlayer = point_distance(x, y, playerX, playerY);
-            var horizontal = 0;
-            var vertical = 0;
-
-            if (distToPlayer <= pursueDistance || (abs(hsp) > 0.1 || abs(vsp) > 0.1)) {
-                if (collision_line(x, y, oPlayer.x, oPlayer.y - 20, oWall, true, false) == noone) {
-
-                    if (playerX > x) horizontal = 1;
-                    else if (playerX < x) horizontal = -1;
-
-                    if (playerY > y) vertical = 1;
-                    else if (playerY < y) vertical = -1;
-
-                    if (distToPlayer <= 10) {
-                        hsp = horizontal * maxSpeed;
-                        vsp = vertical * maxSpeed;
-                    }
-                }
-            
-
-            // === Acceleration and Deceleration ===
-            if (horizontal != 0) {
-                hsp += horizontal * acceleration;
-            } else if (hsp != 0) {
-                var signHsp = sign(hsp);
-                hsp -= signHsp * deceleration;
-                if (sign(hsp) != signHsp) hsp = 0;
-            }
+        if (place_meeting(x + hsp, y, oPlayer)) {
+        while (!place_meeting(x + sign(hsp), y, oPlayer)) {
+            x += sign(hsp);
         }
-
-        // === Apply Gravity ===
-        vsp += grv;
-
-        // === Clamp Speed ===
-        hsp = clamp(hsp, -maxSpeed, maxSpeed);
-
-        // === Horizontal Collision ===
-        if (place_meeting(x + hsp, y, oWall)) {
-            while (!place_meeting(x + sign(hsp), y, oWall)) {
-                x += sign(hsp);
-            }
-            hsp = -hsp;
+        hsp = -hsp*2;
+    }
+ if (place_meeting(x , y+ vsp, oPlayer)) {
+        while (!place_meeting(x , y+ sign(vsp), oPlayer)) {
+            y += sign(vsp);
         }
-
-        // === Vertical Collision ===
-        if (place_meeting(x, y + vsp, oWall)) {
-            while (!place_meeting(x, y + sign(vsp), oWall)) {
-                y += sign(vsp);
-            }
-            vsp = 0;
-        }
-
-        // === Apply Movement ===
-        x += hsp;
-        y += vsp;
+        vsp = -vsp*1.1;
     }
 
-    // === Animation Handling ===
-//    if (vsp != 0) {
-//        sprite_index = ZombieFalling;
-//    } else {
-//        if (hsp >= 1) {
-//            sprite_index = ZombieRun;
-//            image_xscale = -1.75;
-//            image_speed = hsp / 8;
-//        } else if (hsp <= -1) {
-//            sprite_index = ZombieRun;
-//            image_xscale = 1.75;
-//            image_speed = -hsp / 8;
-//        } else if (!place_meeting(x, y, oPlayer)) {
-//            sprite_index = ZombieIdle;
-//        }
+    // === Constants ===
+    var acceleration   = 0.5;
+    var deceleration   = 0.25;
+    var maxSpeed       = 8.5;
+    var pursueDistance = 800;
+    var grv            = 0.4;
 
-//        // Bite when touching player
-//        if (place_meeting(x, y, oPlayer)) {
-//            sprite_index = ZombieBite;
-//            image_speed = 0.5;
-//        }
+    // === Local Vars ===
+    var playerX = oPlayer.x;
+    var playerY = oPlayer.y;
+    var distToPlayer = point_distance(x, y, playerX, playerY);
 
-//        // Ensure biting overrides running animation
-//        if (sprite_index == ZombieRun && place_meeting(x, y, oPlayer)) {
-//            sprite_index = ZombieBite;
-//            image_speed = 0.5;
-//        }
-//    }
+    var horizontal = 0;
+    var vertical   = 0;
 
+    // === Gravity (always applies) ===
+    vsp += grv;
 
+    // === Pursuit only if within range and grounded ===
+    if (distToPlayer <= pursueDistance && place_meeting(x, y + 1, oWall)) {
+
+        // Check line of sight to player
+        if (collision_line(x, y, playerX, playerY - 20, oWall, true, false) == noone) {
+            
+            // Determine direction toward player
+            if (playerX > x) horizontal = 1;
+            else if (playerX < x) horizontal = -1;
+        }
+
+        // === Horizontal Acceleration / Deceleration ===
+        if (horizontal != 0) {
+            hsp += horizontal * acceleration;
+        } else {
+            // Slow down when no horizontal input
+            var signHsp = sign(hsp);
+            hsp -= signHsp * deceleration;
+            if (sign(hsp) != signHsp) hsp = 0;
+        }
+
+    } else {
+        // Not in range or not grounded → gradually stop horizontal movement
+        if (hsp != 0) {
+            var signHsp = sign(hsp);
+            hsp -= signHsp * deceleration;
+            if (sign(hsp) != signHsp) hsp = 0;
+        }
+    }
+
+    // === Clamp Horizontal Speed ===
+    hsp = clamp(hsp, -maxSpeed, maxSpeed);
+
+    // === Horizontal Collision ===
+    if (place_meeting(x + hsp, y, oWall)) {
+        while (!place_meeting(x + sign(hsp), y, oWall)) {
+            x += sign(hsp);
+        }
+        hsp = 0;
+    }
+
+    // === Vertical Collision ===
+    if (place_meeting(x, y + vsp, oWall)) {
+        while (!place_meeting(x, y + sign(vsp), oWall)) {
+            y += sign(vsp);
+        }
+        vsp = 0;
+    }
+
+    // === Apply Movement ===
+    x += hsp;
+    y += vsp;
 
 } else {
-    // Player doesn't exist
     hsp = 0;
-    sprite_index = ZombieIdle;
 }
-
-

@@ -1,5 +1,7 @@
 function PlayerStateFree(){
-	
+	if (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, oSlope) ) {
+    can_dash = true;
+}
 	if place_meeting(x,y,oSlope){
 		slope = true;
 	}else{
@@ -9,7 +11,7 @@ function PlayerStateFree(){
 		instance_destroy();
 	}	
 var accel = 1;  // Acceleration rate
-var decel = 1;  // Deceleration rate
+var decel = .75;  // Deceleration rate
 var max_speed = 12;  // Maximum horizontal speed
 
 
@@ -161,6 +163,14 @@ if (is_rolling) {
         roll_speed = -hsp;
         enemyplayer.hsp = -hsp;
     }
+   if (place_meeting(x + hsp, y, oEnemy)) {
+        while (!place_meeting(x + sign(hsp), y, oEnemy)) {
+            x += sign(hsp);
+        }
+        roll_speed = -hsp;
+        oEnemy.hsp = -hsp;
+    }
+	
 
     // ======= SLOPE FLAG =======
     slope = place_meeting(x, y + 1, oSlope);
@@ -168,13 +178,13 @@ if (is_rolling) {
 	
 if place_meeting(x, y + 1, oSlopeR){
 
-		roll_speed += oSlope.image_xscale* 1
+		roll_speed += grv
 	
 	
 }
 if place_meeting(x, y + 1, oSlopeL){
 
-		roll_speed += oSlope.image_xscale* -1
+		roll_speed +=  -grv
 	
 	
 }
@@ -226,7 +236,7 @@ if (hsp < -max_speed) hsp = -max_speed;
 vsp = vsp + grv ;
 
 //jump
-if (place_meeting(x, y + 20, oWall) && key_jump) {
+if ((place_meeting(x, y + 20, oWall) ||place_meeting(x, y + 20, oSlope) ) && key_jump) {
 //screenshake(5,5);
 //flash =4;
      vsp = -20;
@@ -278,7 +288,14 @@ if (place_meeting(x + hsp, y, enemyplayer)) {
     hsp = -hsp;
 	enemyplayer.hsp = -hsp
 }
-
+if (place_meeting(x + hsp, y, oEnemy)) {
+    while (!place_meeting(x + sign(hsp), y, oEnemy)) {
+        x = x + sign(hsp);
+    }
+	screenshake(1,1)
+    hsp = -hsp;
+	oEnemy.hsp = -hsp
+}
 //Backboard
 if (place_meeting(x + hsp, y, oBackboard)) {
     while (!place_meeting(x + sign(hsp), y, oBackboard)) {
@@ -327,6 +344,25 @@ if (place_meeting(x, y+vsp, oWall)) {
 			enemyplayer.vsp = -vsp
 		}
     }
+	
+
+	    if (vsp != 0 && place_meeting(x, y + vsp, oEnemy)) {
+        var dir = sign(vsp);
+        while (!place_meeting(x, y + dir, oEnemy)) {
+            y += dir;
+        }
+	screenshake(2,2)
+
+        vsp = -vsp; // bounce
+		if !place_meeting(oEnemy.x, oEnemy.y, oWall){
+			oEnemy.vsp = -vsp
+		}
+    }
+	
+	
+	
+	
+	
 }
 
 
@@ -353,7 +389,7 @@ if (hsp != 0) {
 // Track falling
 if (vsp > 4) was_falling = true;
 
-if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer &&  !place_meeting(x,y+20,oSlope)) {
+if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) && !place_meeting(x,y+20,oEnemy)&&  !place_meeting(x,y+20,oSlope) {
     // Airborne
     if (key_kick && key_down&& !is_kicking) {
         is_kicking = true;
@@ -366,7 +402,7 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer &&  !p
         vsp = max(vsp, 0); // Cancel any upward motion
         vsp += 22;         // Slam down force
     }
-    if (!is_kicking && key_kick) {
+    if (!is_kicking && key_kick && can_dash) {
         is_kicking = true;
         groundpounding = false;
         sprite_index = kick;
@@ -374,38 +410,75 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer &&  !p
         image_speed = 1;
     }
 
-    if (is_kicking) {
-		 if ( place_meeting(x, y, enemyplayer)) {
+if (is_kicking) {
 
-        screenshake(vsp/3,vsp/3);
-        vsp = -min(vsp*0.75, 37);
-		enemyplayer.hp -= 5;
-		enemyplayer.flash = 4;
+    if (!groundpounding) {
+
+        // === DASH SETTINGS ===
+        var dash_speed = -13;      // forward speed
+        var dash_lift = 2;        // optional lift
+        var dash_duration = 18;   // frames
+        var dash_decel = 0.5;     // deceleration rate per frame
+
+        if (!is_dashing && can_dash) {
+            is_dashing = true;
+            dash_timer = dash_duration;
+            hsp = dash_speed * sign(image_xscale);
+            vsp = dash_lift;
+			can_dash = false; 
+        }
+
+        if (is_dashing) {
+			has_dashed=true;
+            // Move player
+            x += hsp;
+            y += vsp;
+
+            // Optionally ignore gravity during dash
+            vsp = 0;
+
+            // === DECELERATION ===
+            if (dash_timer <= 20) { // last 4 frames slow down
+                if (hsp > 0) hsp = max(0, hsp - dash_decel);
+                else if (hsp < 0) hsp = min(0, hsp + dash_decel);
+            }
+
+            dash_timer -= 1;
+            if (dash_timer <= 0) {
+                is_dashing = false;
+                hsp = 0;
+                is_kicking = false;
+            }
+        }
+
+        // === ENEMY INTERACTION ===
+        if (place_meeting(x, y, enemyplayer)) {
+            screenshake(4, 4);
+            if (enemyplayer.vsp == 0) {
+                enemyplayer.vsp += vsp / 1.75;
+            } else {
+                enemyplayer.vsp -= vsp;
+            }
+            enemyplayer.flash = 4;
+            // enemyplayer.hp -= 5;
+        }
 		
-		if enemyplayer.vsp = 0 {
-		enemyplayer.vsp +=vsp/1.75;
-		//enemyplayer.vsp = -abs(vsp / 1.5);
-		}else{
-	
-			enemyplayer.vsp -= vsp;
-		}
 		
-		is_kicking= false;
-		groundpounding = false;
+		
+		
     }
-        if (groundpounding) {
-            // Committed to ground pound
-            sprite_index = groundpound;
-        } else {
-            sprite_index = kick;
-        }
 
-        // Freeze animation on last frame
-        if (image_index >= image_number - 1) {
-            image_index = image_number - 1;
-            image_speed = 0;
-        }
-    } 
+    // === ANIMATION HANDLING ===
+    if (groundpounding) sprite_index = groundpound;
+    else sprite_index = kick;
+
+    if (image_index >= image_number - 1) {
+        image_index = image_number - 1;
+        image_speed = 0;
+    }
+}
+
+
 	
 	else {
         // Normal jump/fall
@@ -431,6 +504,20 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer &&  !p
 } else {
     // On the ground
     if (groundpounding) {
+		
+	 if ( place_meeting(x, y + 20, oEnemy)) {
+
+        screenshake(vsp/3,vsp/3);
+        vsp = -min(vsp*1, 37);
+	
+	
+		
+	
+		
+		is_kicking= false;
+		groundpounding = false;
+    }
+	
     // Landed after a ground pound
  if vsp > 0{
 	 
@@ -444,13 +531,14 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
     var snd_id2 = audio_play_sound(sndThud, 1, false);
     audio_sound_pitch(snd_id2, pitch);
 	 }
-	
+	 
+
  if ( place_meeting(x, y + 20, enemyplayer)) {
 
         screenshake(vsp/3,vsp/3);
-        vsp = -min(vsp*0.75, 37);
-		enemyplayer.hp -= 5;
-		enemyplayer.flash = 4;
+        vsp = -min(vsp*.8, 37);
+	
+	
 		
 		if enemyplayer.vsp = 0 {
 		enemyplayer.vsp +=vsp/1.75;
@@ -465,8 +553,14 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
     }
 	
 	else{
-		screenshake(vsp/5,vsp/5);
-        vsp = -min(vsp*0.75, 37); // Bounce up but cap the bounce speed to -20
+	screenshake(vsp/5,vsp/5);
+        vsp = -min(vsp*0.7, 35); 
+		if place_meeting(x, y+20, oSlopeL){
+			hsp-=20
+		}
+	if place_meeting(x, y+20, oSlopeR){
+			hsp +=20
+		}
 	}
  }
  
@@ -487,7 +581,7 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
     sprite_index = (hsp == 0) ? idle : run;
 }
 
-if (hsp != 0) image_xscale = sign(hsp) *-.5;
+if (hsp != 0) image_xscale = sign(hsp) *-3;
 
 //wall slide\
 
@@ -502,11 +596,11 @@ if (place_meeting(x + 1, y, oWall) || place_meeting(x - 1, y, oWall))  {
 }
 if slope = false{
 if(place_meeting(x + 10, y, oWall)){
-	image_xscale = .5
+	image_xscale = 3
 }
 
 if (place_meeting(x - 10, y, oWall)){
-	image_xscale = -.5
+	image_xscale = -3
 }
 }
 if key_jump && (place_meeting(x + 20, y, oWall) || place_meeting(x - 20, y, oWall)) {

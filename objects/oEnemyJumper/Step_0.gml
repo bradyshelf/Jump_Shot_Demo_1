@@ -16,6 +16,20 @@
 
 	// Check if the player exists
 	if (instance_exists(oPlayer)) {
+		        if (place_meeting(x + hsp, y, oPlayer)) {
+        while (!place_meeting(x + sign(hsp), y, oPlayer)) {
+            x += sign(hsp);
+        }
+        hsp = -hsp*2;
+    }
+
+ if (place_meeting(x , y+ vsp, oPlayer)) {
+        while (!place_meeting(x , y+ sign(vsp), oPlayer)) {
+            y += sign(vsp);
+        }
+        vsp = -vsp*1.1;
+    }
+
 	    // Get the player's position
 	    var playerX = oPlayer.x;
 	    var playerY = oPlayer.y;

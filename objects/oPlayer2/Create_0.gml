@@ -17,10 +17,18 @@ if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 1
 		hascontrol = true
 }
-
-
+can_dash = true;
+has_dashed=false
 
 playerid = 2;
+// Dash variables
+// Dash
+is_dashing = false;
+dash_timer = 0;
+dash_duration = 12; // frames
+dash_speed = 18;    // horizontal speed
+dash_lift = -2;     // tiny upward boost
+
 slope = false;
 roll_threshold = 0; // minimum speed to initiate roll
 is_rolling = false;
@@ -32,15 +40,15 @@ last_hdir = 1; // Default facing right
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;
-run = sPlayer2Run
-jump = sPlayer2Jump
-kick = sPlayer2Kick_1
-idle = sPlayer2Idle
-wallslide = sPlayer2WallSlide
+run = sRun_1
+jump = sJump_1
+kick = sDash_1
+idle = sIdle_1
+wallslide = sWallslide_1
 player = oPlayer2
 enemyplayer = oPlayer1
-groundpound = sPlayer2GroundPound
-roll = sPlayer2Roll
+groundpound = sGroundPound_1
+roll = sRoll
 groundpounding = false;
 flash = 0;
 is_kicking=false;

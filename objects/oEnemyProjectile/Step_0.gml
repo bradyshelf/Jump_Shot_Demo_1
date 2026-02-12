@@ -1,74 +1,100 @@
-// Constants for acceleration and deceleration
-var acceleration = 2; // Adjust as needed
-var deceleration = 0.2; // Adjust as needed
-var maxSpeed = 1.5; // Adjust as needed
-var pursueDistance = 10; // Distance threshold to start pursuing the player
-var stopDistance = 200; // Distance threshold to stop pursuing the player
+// === Constants ===
+var acceleration = 2;     // Speed increase rate
+var deceleration = 0.2;   // Slowdown rate
+var maxSpeed = 1.5;       // Max movement speed
+var minDistance = 150;    // Too close → move away
+var maxDistance = 300;    // Too far → move closer
 
-// Check if the player exists
+// === Check for player ===
 if (instance_exists(oPlayer)) {
-    // Get the player's position
-    var playerX = oPlayer.x + chase;
-    var playerY = oPlayer.y + chase;
+	        if (place_meeting(x + hsp, y, oPlayer)) {
+        while (!place_meeting(x + sign(hsp), y, oPlayer)) {
+            x += sign(hsp);
+        }
+        hsp = -hsp*2;
+    }
+ if (place_meeting(x , y+ vsp, oPlayer)) {
+        while (!place_meeting(x , y+ sign(vsp), oPlayer)) {
+            y += sign(vsp);
+        }
+        vsp = -vsp*2;
+    }
 
-    // Calculate the distance to the player
+    var playerX = oPlayer.x;
+    var playerY = oPlayer.y;
     var distToPlayer = point_distance(x, y, playerX, playerY);
-
-    // Movement direction
+    
+    // Direction toward player
+    var dirToPlayer = point_direction(x, y, playerX, playerY);
+    
+    // Default acceleration directions
     var horizontal = 0;
     var vertical = 0;
-
-    // Pursue the player if further than the pursueDistance and within the stopDistance
-    if (distToPlayer > pursueDistance && distToPlayer <= stopDistance && collision_line(x, y, oPlayer.x, oPlayer.y -20, oWall, true, false) == noone) { 
-        if (playerX > x) {
-            horizontal = -0.5;
-        } else if (playerX < x) {
-            horizontal = 0.5;
+    
+    // === Maintain ideal range ===
+    if (collision_line(x, y, playerX, playerY - 20, oWall, true, false) == noone) {
+        // Too far → move TOWARD player
+        if (distToPlayer > maxDistance) {
+            horizontal = lengthdir_x(1, dirToPlayer);
+            vertical   = lengthdir_y(1, dirToPlayer);
         }
-
-        if (playerY > y) {
-            vertical = -0.5;
-        } else if (playerY < y) {
-            vertical = 0.5;
+        // Too close → move AWAY from player
+        else if (distToPlayer < minDistance) {
+            horizontal = -lengthdir_x(1, dirToPlayer);
+            vertical   = -lengthdir_y(1, dirToPlayer);
+        }
+        // Within range → slow down
+        else {
+            horizontal = 0;
+            vertical = 0;
         }
     }
 
-    // Horizontal acceleration and deceleration
+    // === Horizontal movement ===
     if (horizontal != 0) {
         hsp += horizontal * acceleration;
-    } else if (hsp != 0) {
+    } else {
+        // Apply deceleration
         var signHsp = sign(hsp);
         hsp -= signHsp * deceleration;
-        if (sign(hsp) != signHsp) {
-            hsp = 0;
-        }
+        if (sign(hsp) != signHsp) hsp = 0;
+    }
+
+    // === Vertical movement ===
+    if (vertical != 0) {
+        vsp += vertical * acceleration;
+    } else {
+        // Apply deceleration
+        var signVsp = sign(vsp);
+        vsp -= signVsp * deceleration;
+        if (sign(vsp) != signVsp) vsp = 0;
     }
 }
 
-// Apply gravity
-vsp = vsp + grv;
+// === Gravity (if you’re using it) ===
+vsp += grv;
 
-// Apply maximum speed limits
+// === Clamp speeds ===
 hsp = clamp(hsp, -maxSpeed, maxSpeed);
+vsp = clamp(vsp, -maxSpeed, maxSpeed);
 
-// Horizontal collision
+// === Horizontal collision ===
 if (place_meeting(x + hsp, y, oWall)) {
     while (!place_meeting(x + sign(hsp), y, oWall)) {
         x += sign(hsp);
     }
-    hsp = -hsp; // Stop horizontal speed upon collision
-} 
+    hsp = 0;
+}
 x += hsp;
 
-// Vertical collision
+// === Vertical collision ===
 if (place_meeting(x, y + vsp, oWall)) {
     while (!place_meeting(x, y + sign(vsp), oWall)) {
         y += sign(vsp);
     }
-    vsp = 0; // Stop vertical speed upon collision
+    vsp = 0;
 }
-
-x += hsp;
 y += vsp;
+
 
 
