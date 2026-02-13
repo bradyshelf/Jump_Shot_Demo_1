@@ -1,3 +1,5 @@
+hitstop_active = false; // Prevent repeated hitstops
+hitstop_timer = 0;      // Optional: for timing duration
 
 hascontrol = false;
 if hascontrol == false {

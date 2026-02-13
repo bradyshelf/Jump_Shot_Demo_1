@@ -486,20 +486,33 @@ if (is_kicking) {
             enemyplayer.flash = 4;
             // enemyplayer.hp -= 5;
         }
-		        if (instance_place(x+20, y, oEnemy)) {
-            screenshake(4, 4);
-  
-		hp--;
-            oEnemy.flash = 4;
-            // enemyplayer.hp -= 5;
-        }
-		        if (instance_place(x-20, y, oEnemy)) {
-            screenshake(4, 4);
+		       // Check for enemy collision to the right
+if (!hitstop_active && place_meeting(x+20, y, oEnemy)) {
+	screenshake(10,5);
+    hitstop_active = true;      // Activate hitstop
+    hp--;                        // Damage player
+    oEnemy.flash = 4;            // Enemy flash effect
+    instance_create_layer(x, y, "Player", oHitstop); // Spawn hitstop object
+}
 
-		hp--;
-            oEnemy.flash = 4;
-            // enemyplayer.hp -= 5;
-        }
+// Check for enemy collision to the left
+if (!hitstop_active && place_meeting(x-20, y, oEnemy)) {
+	screenshake(10,5);
+    hitstop_active = true;      // Activate hitstop
+    hp--;                        // Damage player
+    oEnemy.flash = 4;
+    instance_create_layer(x, y, "Player", oHitstop);
+}
+
+// Optional: reset hitstop flag after a short duration
+if (hitstop_active) {
+    hitstop_timer += 1;
+    if (hitstop_timer > 2) { // 2 steps later, allow next hit
+        hitstop_active = false;
+        hitstop_timer = 0;
+    }
+}
+
 		
 		
 		
