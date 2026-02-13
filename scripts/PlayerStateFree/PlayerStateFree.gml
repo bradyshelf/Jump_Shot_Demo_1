@@ -476,14 +476,44 @@ if (is_kicking) {
         }
 
         // === ENEMY INTERACTION ===
-        if (place_meeting(x, y, enemyplayer)) {
+        if (place_meeting(x+20, y, enemyplayer)) {
             screenshake(4, 4);
             if (enemyplayer.vsp == 0) {
                 enemyplayer.vsp += vsp / 1.75;
             } else {
                 enemyplayer.vsp -= vsp;
             }
-            enemyplayer.flash = 4;
+            
+            // enemyplayer.hp -= 5;
+        }
+		        if (place_meeting(x-20, y, enemyplayer)) {
+            screenshake(4, 4);
+            if (enemyplayer.vsp == 0) {
+                enemyplayer.hsp += hsp / 1.75;
+            } else {
+                enemyplayer.vsp -= vsp;
+            }
+            
+            // enemyplayer.hp -= 5;
+        }
+		    if (place_meeting(x, y+20, enemyplayer)) {
+            screenshake(4, 4);
+            if (enemyplayer.hsp == 0) {
+                enemyplayer.hsp += hsp / 1.75;
+            } else {
+                enemyplayer.hsp -= hsp;
+            }
+            
+            // enemyplayer.hp -= 5;
+        }
+		        if (place_meeting(x, y-20, enemyplayer)) {
+            screenshake(4, 4);
+            if (enemyplayer.hsp == 0) {
+                enemyplayer.hsp += hsp / 1.75;
+            } else {
+                enemyplayer.hsp -= hsp;
+            }
+            
             // enemyplayer.hp -= 5;
         }
 		       // Check for enemy collision to the right
