@@ -81,14 +81,14 @@ var z = zoom_factor; // for readability
 var zoom_adj = 1 / z; // smaller when zoomed in, larger when zoomed out
 
 // horizontal parallax
-if (layer_exists("BG1")) layer_x("BG1", base_x * 0.1 * zoom_adj);
-if (layer_exists("BG2")) layer_x("BG2", base_x * 0.09 * zoom_adj);
-if (layer_exists("BG3")) layer_x("BG3", base_x * 0.08* zoom_adj);
+
+if (layer_exists("BG2")) layer_x("BG2", base_x * 0.08 * zoom_adj);
+if (layer_exists("BG3")) layer_x("BG3", base_x * 0.075* zoom_adj);
 if (layer_exists("BG4")) layer_x("BG4", base_x * 0.05 * zoom_adj);
-if (layer_exists("BG5")) layer_x("BG5", base_x * 0.04 * zoom_adj);
+if (layer_exists("BG5")) layer_x("BG5", base_x * 0.025 * zoom_adj);
 if (layer_exists("BG6")) layer_x("BG6", base_x * 0.01 * zoom_adj);
-if (layer_exists("BG7")) layer_x("BG7", base_x * 0.005 * zoom_adj);
-if (layer_exists("BG8")) layer_x("BG8", base_x * 0.005 * zoom_adj);
+if (layer_exists("BG7")) layer_x("BG7", base_x * 0.001 * zoom_adj);
+if (layer_exists("BG8")) layer_x("BG8", base_x * 0.001 * zoom_adj);
 
 }
 

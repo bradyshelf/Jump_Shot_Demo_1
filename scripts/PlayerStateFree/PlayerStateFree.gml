@@ -25,7 +25,7 @@ if (hascontrol) {
     var key_kick_gp   = gamepad_button_check_pressed(gamepad_index, gp_face3); // X / Square
     var key_gp_gp     = gamepad_button_check_pressed(gamepad_index, gp_face4); // Y / Triangle
     var key_roll_gp   = gamepad_button_check(gamepad_index, gp_face2); // B / Circle
-
+ var key_pause_gp   = gamepad_button_check(gamepad_index, gp_touchpadbutton); // B / Circle
 
         key_left  = key_left_gp;
         key_right = key_right_gp;
@@ -34,7 +34,7 @@ if (hascontrol) {
         key_kick  = key_kick_gp;
         key_gp    = key_gp_gp;
         key_roll  = key_roll_gp;
-    
+		key_pause = key_pause_gp;
     
     
 
@@ -47,7 +47,7 @@ if (hascontrol) {
     var key_roll_kb   = keyboard_check(ord("S")); // Roll with S (hold down)
     var key_kick_kb   = keyboard_check_pressed(ord("E")); // Kick
     var key_gp_kb     = keyboard_check_pressed(ord("E")) && keyboard_check(ord("S")); // E + Down = Ground Pound
-	
+	var key_pause_kb     = keyboard_check_pressed(vk_escape);//pause
 
 		key_left  = key_left_kb;
         key_right = key_right_kb;
@@ -56,6 +56,7 @@ if (hascontrol) {
         key_kick  = key_kick_kb;
         key_gp    = key_gp_kb;
         key_roll  = key_roll_kb;
+		key_pause = key_pause_kb;
 	}
 if playerid == 2	{
 	var key_left_kb   = keyboard_check(vk_left);
@@ -65,7 +66,7 @@ if playerid == 2	{
     var key_roll_kb   = keyboard_check(vk_down); // Roll with S (hold down)
     var key_kick_kb   = keyboard_check_pressed(ord("M")); // Kick
     var key_gp_kb     = keyboard_check_pressed(ord("M")) && keyboard_check(vk_down); // E + Down = Ground Pound
-	
+	var key_pause_kb     = keyboard_check_pressed(vk_escape);//pause
 
 		key_left  = key_left_kb;
         key_right = key_right_kb;
@@ -74,7 +75,12 @@ if playerid == 2	{
         key_kick  = key_kick_kb;
         key_gp    = key_gp_kb;
         key_roll  = key_roll_kb;
+		key_pause = key_pause_kb;
 }
+}
+
+if (key_pause)&& !instance_exists(oPauseScreen){
+	instance_create_layer(x,y,"Player", oPauseScreen);
 }
 
 
@@ -101,7 +107,7 @@ if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, 
 
 // ======= ROLLING LOGIC =======
 if (is_rolling) {
-
+mask_index = sRoll;
     // ======= APPLY GRAVITY =======
     vsp += grv;
 
@@ -148,6 +154,7 @@ if (is_rolling) {
         hsp = 0;
         roll_speed = 0;
         is_rolling = false;
+		mask_index = sIdle;
     } else {
         // Commit movement
         x = target_x;
@@ -167,11 +174,21 @@ if (is_rolling) {
         while (!place_meeting(x + sign(hsp), y, oEnemy)) {
             x += sign(hsp);
         }
-        roll_speed = -hsp;
-        oEnemy.hsp = -hsp;
-    }
-	
+		oEnemy.hsp = -oEnemy.hsp;
 
+        roll_speed = -hsp;
+     
+    }
+	if place_meeting(x+20, y, oEnemy){
+		instance_create_layer(x,y,"Player",oHitstop);
+		
+		oEnemy.flash =4
+	}
+	if place_meeting(x-20, y, oEnemy){
+		instance_create_layer(x,y,"Player",oHitstop);
+		
+		oEnemy.flash =4
+	}
     // ======= SLOPE FLAG =======
     slope = place_meeting(x, y + 1, oSlope);
     if (slope) SlopeAdjust2();
@@ -201,9 +218,11 @@ if place_meeting(x, y + 1, oSlopeL){
     if (key_jump) {
         is_rolling = false;
         vsp = -20; // jump normally
+		mask_index = sIdle;
     }
     if (!key_roll) {
         is_rolling = false;
+		mask_index = sIdle;
     }
 
     // ======= UPDATE SPRITE =======
@@ -294,7 +313,8 @@ if (place_meeting(x + hsp, y, oEnemy)) {
     }
 	screenshake(1,1)
     hsp = -hsp;
-	oEnemy.hsp = -hsp
+	oEnemy.hsp = -hsp*1.1
+
 }
 //Backboard
 if (place_meeting(x + hsp, y, oBackboard)) {
@@ -339,7 +359,7 @@ if (place_meeting(x, y+vsp, oWall)) {
         }
 	screenshake(2,2)
 
-        vsp = -vsp; // bounce
+        vsp = -vsp*1.1; // bounce
 		if !place_meeting(enemyplayer.x, enemyplayer.y, oWall){
 			enemyplayer.vsp = -vsp
 		}
@@ -353,9 +373,10 @@ if (place_meeting(x, y+vsp, oWall)) {
         }
 	screenshake(2,2)
 
-        vsp = -vsp; // bounce
+        vsp = -vsp*1.1; // bounce
 		if !place_meeting(oEnemy.x, oEnemy.y, oWall){
-			oEnemy.vsp = -vsp
+			oEnemy.vsp = -vsp*1.1
+
 		}
     }
 	
@@ -408,6 +429,7 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) && !p
         sprite_index = kick;
         image_index = 0;
         image_speed = 1;
+		
     }
 
 if (is_kicking) {
@@ -429,6 +451,8 @@ if (is_kicking) {
         }
 
         if (is_dashing) {
+			
+			
 			has_dashed=true;
             // Move player
             x += hsp;
@@ -462,7 +486,20 @@ if (is_kicking) {
             enemyplayer.flash = 4;
             // enemyplayer.hp -= 5;
         }
-		
+		        if (instance_place(x+20, y, oEnemy)) {
+            screenshake(4, 4);
+  
+		hp--;
+            oEnemy.flash = 4;
+            // enemyplayer.hp -= 5;
+        }
+		        if (instance_place(x-20, y, oEnemy)) {
+            screenshake(4, 4);
+
+		hp--;
+            oEnemy.flash = 4;
+            // enemyplayer.hp -= 5;
+        }
 		
 		
 		
@@ -509,8 +546,9 @@ if (is_kicking) {
 
         screenshake(vsp/3,vsp/3);
         vsp = -min(vsp*1, 37);
-	
-	
+		oEnemy.flash = 4;
+		instance_create_layer(x,y,"Player",oHitstop);
+		hp--;
 		
 	
 		
@@ -537,7 +575,7 @@ var pitch = random_range(.8, 1.2); // Slightly vary the pitch
 
         screenshake(vsp/3,vsp/3);
         vsp = -min(vsp*.8, 37);
-	
+
 	
 		
 		if enemyplayer.vsp = 0 {

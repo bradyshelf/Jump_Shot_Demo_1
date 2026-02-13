@@ -1,3 +1,12 @@
+
+	if instance_exists(oScreenPause){
+speed = 0;
+exit;
+}else{
+speed = 10;	
+}
+
+
 if(place_meeting(x,y,oWall) || place_meeting(x,y,oPlayer)) && (image_index != 0)
 {
 	speed = 0;

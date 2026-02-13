@@ -1,9 +1,19 @@
+if instance_exists(oScreenPause){
+image_speed = 0;
+exit;
+}else{
+image_speed = 1;	
+}
+
 if (instance_exists(oPlayer)) {
         if (place_meeting(x + hsp, y, oPlayer)) {
         while (!place_meeting(x + sign(hsp), y, oPlayer)) {
             x += sign(hsp);
         }
         hsp = -hsp*2;
+		oPlayer.flash = 4
+		oPlayer.hp -=1;
+		instance_create_layer(x,y,"Player",oHitstop);
     }
  if (place_meeting(x , y+ vsp, oPlayer)) {
         while (!place_meeting(x , y+ sign(vsp), oPlayer)) {

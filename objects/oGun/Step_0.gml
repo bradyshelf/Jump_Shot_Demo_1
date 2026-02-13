@@ -1,4 +1,11 @@
 
+if instance_exists(oScreenPause){
+
+exit;
+}else{
+
+
+
 // oGun Step Event (or equivalent)
 
 // Positioning and recoil management
@@ -52,6 +59,6 @@ if (instance_exists(oPlayer)) {
 x = x - lengthdir_x(recoil, image_angle);
 y = y - lengthdir_y(recoil, image_angle);
 
-
+}
 
 

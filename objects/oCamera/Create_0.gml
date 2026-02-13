@@ -1,4 +1,5 @@
 
+// oHitstopController Create Event
 
 p1 = oPlayer1
 p2= oPlayer2

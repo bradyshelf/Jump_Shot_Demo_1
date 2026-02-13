@@ -1,9 +1,10 @@
 	// Constants for acceleration and deceleration
+
 	var acceleration = 1; // Adjust as needed
 	var deceleration = 0.5; // Adjust as needed
 	var maxSpeed = 3; // Adjust as needed
 	var pursueDistance = 400; // Distance threshold to start pursuing the player
-	var jumpSpeed = -10; // Adjusted for higher jump strength
+	var jumpSpeed = -7; // Adjusted for higher jump strength
 	var wallJumpSpeed = -10; // Adjusted for higher wall jump strength
 	var wallJumpOutwardSpeed = 7; // Adjust as needed for wall jump outward strength
 
@@ -21,13 +22,20 @@
             x += sign(hsp);
         }
         hsp = -hsp*2;
+		oPlayer.flash = 4
+		oPlayer.hp -=2;
+		instance_create_layer(x,y,"Player",oHitstop);
     }
 
  if (place_meeting(x , y+ vsp, oPlayer)) {
         while (!place_meeting(x , y+ sign(vsp), oPlayer)) {
             y += sign(vsp);
         }
-        vsp = -vsp*1.1;
+		vsp = -vsp*1.1;
+		oPlayer.flash = 4
+		oPlayer.hp -=4;
+		instance_create_layer(x,y,"Player",oHitstop);
+      
     }
 
 	    // Get the player's position
