@@ -6,9 +6,9 @@ if (hp <= 0)
 	//	hsp = lengthdir_x(3,direction);
 	//	vsp = lengthdir_y(3,direction)-2;
 	//}
-	
-	with(mygun) instance_destroy();
-
-	instance_destroy();
+	instance_destroy(oBossPhaseMelee);
+	instance_destroy(oBossPhaseProjectile);
+	instance_destroy(oBossGun);
+	instance_destroy(self);
 }
 

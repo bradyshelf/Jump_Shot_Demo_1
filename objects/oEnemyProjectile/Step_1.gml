@@ -7,7 +7,7 @@ if (hp <= 0)
 	//	vsp = lengthdir_y(3,direction)-2;
 	//}
 	
-	with(mygun) instance_destroy();
+instance_destroy(mygun);
 
 	instance_destroy();
 }

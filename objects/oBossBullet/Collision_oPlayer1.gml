@@ -1,4 +1,9 @@
-
+		 if !audio_is_playing(sndHurt){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndHurt, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
+		
 //audio_play_sound(sndHit, 1, false);
 instance_create_layer(x,y,"Player",oHitstop);
 screenshake(4,4);
@@ -53,6 +58,19 @@ flash = 4
         knockback_y = -knockback_y;
         new_y = y + knockback_y * knockback_strength_y + vertical_knockback;
     }
+	
+		        if (place_meeting(new_x, y, oEnemy)) {
+        // Bounce horizontally
+        knockback_x = -knockback_x;
+        new_x = x + knockback_x * knockback_strength_x;
+    }
+    
+    if (place_meeting(x, new_y, oEnemy)) {
+        // Bounce vertically
+        knockback_y = -knockback_y;
+        new_y = y + knockback_y * knockback_strength_y + vertical_knockback;
+    }
+	
     // Update position
     x = new_x;
     y = new_y;

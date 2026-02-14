@@ -41,6 +41,7 @@ roll_decel = 0.25; // optional: natural deceleration
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;
+hit = sHit;
 run = sRun
 jump = sJump
 kick = sDash

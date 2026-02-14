@@ -42,6 +42,7 @@ last_hdir = 1; // Default facing right
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;
+hit = sHit;
 run = sRun_1
 jump = sJump_1
 kick = sDash_1

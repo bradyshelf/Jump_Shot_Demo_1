@@ -1,3 +1,10 @@
+
+
+if !instance_exists(oBossPhaseProjectile)&& !instance_exists(oBossPhaseMelee){
+
+instance_destroy();
+}
+
 if instance_exists(oBossPhaseProjectile){
 		x= oBossPhaseProjectile.x
 		y= oBossPhaseProjectile.y

@@ -1,122 +1,134 @@
-	// Constants for acceleration and deceleration
+	// === Constants ===
+var acceleration = 1;
+var deceleration = 0.5;
+var maxSpeed = 3;
+var pursueDistance = 400;
+var jumpSpeed = -7;
+var wallJumpSpeed = -10;
+var wallJumpOutwardSpeed = 7;
+var grv = 0.4;
 
-	var acceleration = 1; // Adjust as needed
-	var deceleration = 0.5; // Adjust as needed
-	var maxSpeed = 3; // Adjust as needed
-	var pursueDistance = 400; // Distance threshold to start pursuing the player
-	var jumpSpeed = -7; // Adjusted for higher jump strength
-	var wallJumpSpeed = -10; // Adjusted for higher wall jump strength
-	var wallJumpOutwardSpeed = 7; // Adjust as needed for wall jump outward strength
+// === State variables ===
+var onGround = place_meeting(x, y + 1, oWall);
+var onWallLeft = place_meeting(x - 1, y, oWall);
+var onWallRight = place_meeting(x + 1, y, oWall);
+var onWall = onWallLeft || onWallRight;
+var canJump = onGround || onWall;
 
-	// State variables
-	var onGround = place_meeting(x, y + 1, oWall);
-	var onWallLeft = place_meeting(x - 1, y, oWall);
-	var onWallRight = place_meeting(x + 1, y, oWall);
-	var onWall = onWallLeft || onWallRight;
-	var canJump = onGround || onWall;
+// === Pause check ===
+if instance_exists(oScreenPause) {
+    image_speed = 0;
+    exit;
+} else {
+    image_speed = 1;
+}
 
-	// Check if the player exists
-	if (instance_exists(oPlayer)) {
-		        if (place_meeting(x + hsp, y, oPlayer)) {
-        while (!place_meeting(x + sign(hsp), y, oPlayer)) {
+// === Find closest player ===
+var closestPlayer = noone;
+var minDist = 999999;
+
+with (oPlayer) {
+    var d = point_distance(other.x, other.y, x, y);
+    if (d < minDist) {
+        minDist = d;
+        closestPlayer = id;
+    }
+}
+
+if closestPlayer != noone {
+
+    // --- Collision with the closest player ---
+    if (place_meeting(x + hsp, y, closestPlayer)) {
+        while (!place_meeting(x + sign(hsp), y, closestPlayer)) {
             x += sign(hsp);
         }
         hsp = -hsp*2;
-		oPlayer.flash = 4
-		oPlayer.hp -=2;
-		instance_create_layer(x,y,"Player",oHitstop);
+        screenshake(3,3);
+
+        closestPlayer.hsp = -hsp*2;
+        closestPlayer.flash = 4;
+        closestPlayer.hp -= 2;
+        instance_create_layer(x, y, "Player", oHitstop);
+
+        if !audio_is_playing(sndHurt) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndHurt, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
     }
 
- if (place_meeting(x , y+ vsp, oPlayer)) {
-        while (!place_meeting(x , y+ sign(vsp), oPlayer)) {
+    if (place_meeting(x, y + vsp, closestPlayer)) {
+        while (!place_meeting(x, y + sign(vsp), closestPlayer)) {
             y += sign(vsp);
         }
-		vsp = -vsp*1.1;
-		oPlayer.flash = 4
-		oPlayer.hp -=4;
-		instance_create_layer(x,y,"Player",oHitstop);
-      
+        vsp = -vsp*1.1;
+        screenshake(3,3);
+
+        closestPlayer.flash = 4;
+        closestPlayer.hp -= 4;
+        instance_create_layer(x, y, "Player", oHitstop);
+
+        if !audio_is_playing(sndHurt) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndHurt, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
     }
 
-	    // Get the player's position
-	    var playerX = oPlayer.x;
-	    var playerY = oPlayer.y;
+    // --- Pursue closest player ---
+    var playerX = closestPlayer.x;
+    var playerY = closestPlayer.y;
+    var distToPlayer = minDist;
 
-	    // Calculate the distance to the player
-	    var distToPlayer = point_distance(x, y, playerX, playerY);
+    var targetHsp = 0;
+    var targetVsp = 0;
 
-	    // Movement direction
-	    var targetHsp = 0;
-	    var targetVsp = 0;
+    if (distToPlayer <= pursueDistance && collision_line(x, y, playerX, playerY - 20, oWall, true, false) == noone) {
+        if (playerX > x) targetHsp = acceleration;
+        else if (playerX < x) targetHsp = -acceleration;
 
-	    // Pursue the player if within the pursueDistance
-	    if (distToPlayer <= pursueDistance && collision_line(x, y, oPlayer.x, oPlayer.y - 20, oWall, true, false) == noone) {
-	        if (playerX > x) {
-	            targetHsp = acceleration;
-	        } else if (playerX < x) {
-	            targetHsp = -acceleration;
-	        }
+        if (playerY > y) targetVsp = acceleration;
+        else if (playerY < y) targetVsp = -acceleration;
+    }
 
-	        if (playerY > y) {
-	            targetVsp = acceleration;
-	        } else if (playerY < y) {
-	            targetVsp = -acceleration;
-	        }
-	    }
+    // Apply horizontal acceleration/deceleration
+    if (targetHsp != 0) hsp += targetHsp;
+    else {
+        if (hsp > 0) hsp = max(0, hsp - deceleration);
+        else if (hsp < 0) hsp = min(0, hsp + deceleration);
+    }
 
-	    // Apply acceleration
-	    if (targetHsp != 0) {
-	        hsp += targetHsp;
-	    } else {
-	        // Apply deceleration if not pursuing horizontally
-	        if (hsp > 0) {
-	            hsp = max(0, hsp - deceleration);
-	        } else if (hsp < 0) {
-	            hsp = min(0, hsp + deceleration);
-	        }
-	    }
+    // Jump if able
+    if (canJump && collision_line(x, y, playerX, playerY - 20, oWall, true, false) == noone) {
+        vsp = jumpSpeed;
+    }
 
-	    // Always allow jumping if canJump
-	    if (canJump && collision_line(x, y, oPlayer.x, oPlayer.y - 20, oWall, true, false) == noone) {
-	        vsp = jumpSpeed; // Set vsp to jumpSpeed when canJump
-	    }
+    // Wall jump logic
+    if (onWall) {
+        if (onWallRight) hsp = -wallJumpOutwardSpeed;
+        else if (onWallLeft) hsp = wallJumpOutwardSpeed;
+        vsp = wallJumpSpeed;
+    }
+}
 
-	    // Handle wall jumping
-	    if (onWall) {
-	        if (onWallRight) {
-	            hsp = -wallJumpOutwardSpeed; // Jumping left
-	        } else if (onWallLeft) {
-	            hsp = wallJumpOutwardSpeed; // Jumping right
-	        }
-	        vsp = wallJumpSpeed; // Set vsp to wallJumpSpeed
-	    }
-	}
+// --- Apply gravity ---
+vsp += grv;
 
-	// Apply gravity
-	vsp += grv;
+// --- Clamp horizontal speed ---
+hsp = clamp(hsp, -maxSpeed, maxSpeed);
 
-	// Apply maximum speed limits
-	hsp = clamp(hsp, -maxSpeed, maxSpeed);
+// --- Horizontal collision with walls ---
+if (place_meeting(x + hsp, y, oWall)) {
+    while (!place_meeting(x + sign(hsp), y, oWall)) x += sign(hsp);
+    hsp = -hsp;
+}
 
-	// Horizontal collision
-	if (place_meeting(x + hsp, y, oWall)) {
-	    while (!place_meeting(x + sign(hsp), y, oWall)) {
-	        x += sign(hsp);
-	    }
-	    hsp = -hsp; // Stop horizontal speed upon collision
-	}
+// --- Vertical collision with walls ---
+if (place_meeting(x, y + vsp, oWall)) {
+    while (!place_meeting(x, y + sign(vsp), oWall)) y += sign(vsp);
+    vsp = 0;
+}
 
-	// Vertical collision
-	if (place_meeting(x, y + vsp, oWall)) {
-	    while (!place_meeting(x, y + sign(vsp), oWall)) {
-	        y += sign(vsp);
-	    }
-	    vsp = 0; // Stop vertical speed upon collision
-	}
-
-
-
-
-	// Update position
-	x += hsp;
-	y += vsp;
+// --- Update position ---
+x += hsp;
+y += vsp;

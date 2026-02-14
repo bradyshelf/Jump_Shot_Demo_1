@@ -10,7 +10,7 @@
   "compression":1,
   "compressionQuality":3,
   "conversionMode":0,
-  "duration":0.104438,
+  "duration":0.104489796,
   "exportDir":"",
   "name":"sndBounce",
   "parent":{

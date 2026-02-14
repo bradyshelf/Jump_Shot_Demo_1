@@ -107,6 +107,12 @@ if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, 
 
 // ======= ROLLING LOGIC =======
 if (is_rolling) {
+	
+	if (key_left) {
+    roll_speed -= accel/3; //Accelerate
+} if (key_right) {
+    roll_speed += accel/3; //Accelerate
+}
 mask_index = sRoll;
     // ======= APPLY GRAVITY =======
     vsp += grv;
@@ -179,16 +185,127 @@ mask_index = sRoll;
         roll_speed = -hsp;
      
     }
-	if place_meeting(x+20, y, oEnemy){
-		instance_create_layer(x,y,"Player",oHitstop);
-		
-		oEnemy.flash =4
+	
+	
+	
+		if place_meeting(x+20, y, oEnemy){
+	 if !audio_is_playing(sndThud){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndThud, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
 	}
 	if place_meeting(x-20, y, oEnemy){
-		instance_create_layer(x,y,"Player",oHitstop);
-		
-		oEnemy.flash =4
+		 if !audio_is_playing(sndThud){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndThud, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
 	}
+	//Enemy Roll Damage
+// ==== ENEMY MELEE ====
+if roll_speed != 0{
+var melee_hit_right = instance_place(x + 20, y, oEnemyMelee) ;
+if (melee_hit_right != noone) {
+    with (melee_hit_right) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+var melee_hit_left = instance_place(x - 20, y, oEnemyMelee);
+if (melee_hit_left != noone) {
+    with (melee_hit_left) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+
+// ==== ENEMY JUMPER ====
+var jumper_hit_right = instance_place(x + 20, y, oEnemyJumper);
+if (jumper_hit_right != noone) {
+    with (jumper_hit_right) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+var jumper_hit_left = instance_place(x - 20, y, oEnemyJumper);
+if (jumper_hit_left != noone) {
+    with (jumper_hit_left) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+
+// ==== ENEMY PROJECTILE ====
+var proj_hit_right = instance_place(x + 20, y, oEnemyProjectile);
+if (proj_hit_right != noone) {
+    with (proj_hit_right) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+var proj_hit_left = instance_place(x - 20, y, oEnemyProjectile);
+if (proj_hit_left != noone) {
+    with (proj_hit_left) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+    screenshake(5, 5);
+}
+
+	
+	//
+				if place_meeting(x+20, y, oBossPhaseProjectile){
+		instance_create_layer(x,y,"Player",oHitstop);
+		screenshake(5,5);
+		oBossPhaseProjectile.flash =4
+		oBossCollision.hp--;
+	}
+	if place_meeting(x-20, y, oBossPhaseProjectile){
+		instance_create_layer(x,y,"Player",oHitstop);
+		screenshake(5,5);
+		oBossPhaseProjectile.flash =4
+		oBossCollision.hp--;
+	}
+	
+			if place_meeting(x+20, y, oBossPhaseMelee){
+		instance_create_layer(x,y,"Player",oHitstop);
+		screenshake(5,5);
+		oBossPhaseMelee.flash =4
+		oBossCollision.hp--;
+	}
+	if place_meeting(x-20, y, oBossPhaseProjectile){
+		instance_create_layer(x,y,"Player",oHitstop);
+		screenshake(5,5);
+		oBossPhaseMelee.flash =4
+		oBossCollision.hp--;
+	}
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
     // ======= SLOPE FLAG =======
     slope = place_meeting(x, y + 1, oSlope);
     if (slope) SlopeAdjust2();
@@ -312,9 +429,20 @@ if (place_meeting(x + hsp, y, oEnemy)) {
         x = x + sign(hsp);
     }
 	screenshake(1,1)
+
     hsp = -hsp;
 	oEnemy.hsp = -hsp*1.1
-
+	
+	
+	
+	 if !audio_is_playing(sndThud){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndThud, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+ }
+ 
+ 
+ 
 }
 //Backboard
 if (place_meeting(x + hsp, y, oBackboard)) {
@@ -374,6 +502,14 @@ if (place_meeting(x, y+vsp, oWall)) {
 	screenshake(2,2)
 
         vsp = -vsp*1.1; // bounce
+		
+				 if !audio_is_playing(sndThud){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndThud, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+ }
+		
+		
 		if !place_meeting(oEnemy.x, oEnemy.y, oWall){
 			oEnemy.vsp = -vsp*1.1
 
@@ -424,6 +560,7 @@ if (!place_meeting(x, y + 20, oWall))&& !place_meeting(x,y+20,enemyplayer) && !p
         vsp += 22;         // Slam down force
     }
     if (!is_kicking && key_kick && can_dash) {
+		instance_create_layer(x,y,"Player",oDashPuff);
         is_kicking = true;
         groundpounding = false;
         sprite_index = kick;
@@ -448,6 +585,11 @@ if (is_kicking) {
             hsp = dash_speed * sign(image_xscale);
             vsp = dash_lift;
 			can_dash = false; 
+				if !audio_is_playing(sndDash){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndDash, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
         }
 
         if (is_dashing) {
@@ -516,23 +658,137 @@ if (is_kicking) {
             
             // enemyplayer.hp -= 5;
         }
-		       // Check for enemy collision to the right
-if (!hitstop_active && place_meeting(x+20, y, oEnemy)) {
-	screenshake(10,5);
-    hitstop_active = true;      // Activate hitstop
-    hp--;                        // Damage player
-    oEnemy.flash = 4;            // Enemy flash effect
-    instance_create_layer(x, y, "Player", oHitstop); // Spawn hitstop object
-}
+		       
+			   
+			   
+		if (!hitstop_active && place_meeting(x+20, y, oEnemy)) {
 
+}
+ 
 // Check for enemy collision to the left
 if (!hitstop_active && place_meeting(x-20, y, oEnemy)) {
+
+}
+	   
+			   // Check for enemy collision to the right
+			   
+// ==== Enemy Melee Hit Detection ====
+if (!hitstop_active) {
+    var melee_hit_right = instance_place(x + 20, y, oEnemyMelee);
+    var melee_hit_left  = instance_place(x - 20, y, oEnemyMelee);
+    
+    if (melee_hit_right != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (melee_hit_right) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+    else if (melee_hit_left != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (melee_hit_left) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+}
+
+
+// ==== Enemy Jumper Hit Detection ====
+if (!hitstop_active) {
+    var jumper_hit_right = instance_place(x + 20, y, oEnemyJumper);
+    var jumper_hit_left  = instance_place(x - 20, y, oEnemyJumper);
+    
+    if (jumper_hit_right != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (jumper_hit_right) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+    else if (jumper_hit_left != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (jumper_hit_left) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+}
+
+
+// ==== Enemy Projectile Hit Detection ====
+if (!hitstop_active) {
+    var proj_hit_right = instance_place(x + 20, y, oEnemyProjectile);
+    var proj_hit_left  = instance_place(x - 20, y, oEnemyProjectile);
+    
+    if (proj_hit_right != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (proj_hit_right) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+    else if (proj_hit_left != noone) {
+        screenshake(10, 5);
+        hitstop_active = true;
+        with (proj_hit_left) {
+            hp--;
+            flash = 4;
+        }
+        instance_create_layer(x, y, "Player", oHitstop);
+    }
+}
+
+
+if (!hitstop_active && place_meeting(x+20, y, oBossPhaseMelee)) {
 	screenshake(10,5);
     hitstop_active = true;      // Activate hitstop
-    hp--;                        // Damage player
-    oEnemy.flash = 4;
+    oBossCollision.hp--;                        // Damage player
+    oBossPhaseMelee.flash = 4;            // Enemy flash effect
+    instance_create_layer(x, y, "Player", oHitstop); // Spawn hitstop object
+}
+ 
+// Check for enemy collision to the left
+if (!hitstop_active && place_meeting(x-20, y, oBossPhaseMelee)) {
+	screenshake(10,5);
+    hitstop_active = true;      // Activate hitstop
+    oBossCollision.hp--;                        // Damage player
+    oBossPhaseMelee.flash = 4;
     instance_create_layer(x, y, "Player", oHitstop);
 }
+ // 
+ 
+ if (!hitstop_active && place_meeting(x+20, y, oBossPhaseProjectile)) {
+	screenshake(10,5);
+    hitstop_active = true;      // Activate hitstop
+    oBossCollision.hp--;                        // Damage player
+    oBossPhaseProjectile.flash = 4;            // Enemy flash effect
+    instance_create_layer(x, y, "Player", oHitstop); // Spawn hitstop object
+}
+ 
+// Check for enemy collision to the left
+if (!hitstop_active && place_meeting(x-20, y, oBossPhaseProjectile)) {
+	screenshake(10,5);
+    hitstop_active = true;      // Activate hitstop
+    oBossCollision.hp--;                        // Damage player
+    oBossPhaseProjectile.flash = 4;
+    instance_create_layer(x, y, "Player", oHitstop);
+}
+
+ 
+ 
+ 
+
 
 // Optional: reset hitstop flag after a short duration
 if (hitstop_active) {
@@ -541,8 +797,18 @@ if (hitstop_active) {
         hitstop_active = false;
         hitstop_timer = 0;
     }
+	
+	
+	
+	
+	
+	
 }
 
+		
+		
+		
+		
 		
 		
 		
@@ -589,15 +855,74 @@ if (hitstop_active) {
 
         screenshake(vsp/3,vsp/3);
         vsp = -min(vsp*1, 37);
-		oEnemy.flash = 4;
-		instance_create_layer(x,y,"Player",oHitstop);
-		hp--;
-		
 	
 		
 		is_kicking= false;
 		groundpounding = false;
     }
+	
+	//
+	
+	// ==== Enemy Melee Collision ====
+var melee_hit = instance_place(x, y + 20, oEnemyMelee);
+if (melee_hit != noone) {
+    with (melee_hit) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+}
+
+
+// ==== Enemy Jumper Collision ====
+var jumper_hit = instance_place(x, y + 20, oEnemyJumper);
+if (jumper_hit != noone) {
+    with (jumper_hit) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+}
+
+
+// ==== Enemy Projectile Collision ====
+var proj_hit = instance_place(x, y + 20, oEnemyProjectile);
+if (proj_hit != noone) {
+    with (proj_hit) {
+        flash = 4;
+        hp--;
+    }
+    instance_create_layer(x, y, "Player", oHitstop);
+}
+
+	
+		 if ( place_meeting(x, y + 20, oBossPhaseProjectile)) {
+
+		oBossPhaseProjectile.flash = 4;
+		instance_create_layer(x,y,"Player",oHitstop);
+		oBossCollision.hp--;
+		
+	
+		
+
+    }
+	
+	//
+	
+	 if ( place_meeting(x, y + 20, oBossPhaseMelee)) {
+
+		oBossPhaseMelee.flash = 4;
+		instance_create_layer(x,y,"Player",oHitstop);
+		oBossCollision.hp--;
+		
+	
+		
+
+    }
+	
+	
+	
+	
 	
     // Landed after a ground pound
  if vsp > 0{
