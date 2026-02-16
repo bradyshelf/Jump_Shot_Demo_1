@@ -1,9 +1,9 @@
-// === Constants ===
-
+/// === TIMER & PHASE SWITCH ===
 timer -= 1;
 if (timer <= 0) {
     instance_change(oBossPhaseMelee, true);
 }
+
 /// === PAUSE CHECK ===
 if (instance_exists(oScreenPause)) {
     image_speed = 0;
@@ -13,20 +13,19 @@ if (instance_exists(oScreenPause)) {
 }
 
 /// === CONSTANTS ===
-var acceleration   = 1;     // Speed increase rate
-var deceleration   = 0.2;   // Slowdown rate
-var maxSpeed       = 1.25;  // Max movement speed
-var minDistance    = 150;   // Too close → move away
-var maxDistance    = 300;   // Too far → move closer
-var hoverAmplitude = 6;     // Vertical bobbing height
-var hoverSpeed     = 0.05;  // Speed of hover motion
-var pursueDistance = 600;
+var acceleration   = 1;      // Speed increase rate
+var deceleration   = 0.2;    // Slowdown rate
+var maxSpeed       = 1.25;   // Max movement speed
+var pursueDistance = 600;    // Distance to start pursuing
+var verticalOffset = -500;   // Stay above player
+var hoverAmplitude = 6;      // Vertical bobbing height
+var hoverSpeed     = 0.05;   // Speed of hover motion
 
-/// === Local Vars ===
+/// === LOCAL VARIABLES ===
 var closestPlayer = noone;
-var closestDist = 999999;
+var closestDist   = 999999;
 
-/// Find closest player
+/// === FIND CLOSEST PLAYER ===
 with (oPlayer) {
     var dist = point_distance(x, y, other.x, other.y);
     if (dist < closestDist) {
@@ -35,7 +34,7 @@ with (oPlayer) {
     }
 }
 
-// If there is a player
+/// === IF PLAYER EXISTS ===
 if (closestPlayer != noone) {
 
     /// === COLLISION WITH PLAYER ===
@@ -44,10 +43,12 @@ if (closestPlayer != noone) {
             x += sign(hsp);
             y += sign(vsp);
         }
+
         hsp = -hsp * 2;
         vsp = -vsp * 2;
         closestPlayer.hsp = -hsp;
         closestPlayer.vsp = -vsp;
+
         screenshake(5,5);
         closestPlayer.flash = 4;
         closestPlayer.hp -= 10;
@@ -60,17 +61,22 @@ if (closestPlayer != noone) {
         }
     }
 
-    /// === Determine direction toward closest player ===
+    /// === DETERMINE MOVEMENT DIRECTION ===
     var dirX = 0;
     var dirY = 0;
+
     if (closestDist <= pursueDistance) {
         if (collision_line(x, y, closestPlayer.x, closestPlayer.y, oWall, true, false) == noone) {
+            // Horizontal: chase player
             dirX = (closestPlayer.x > x) ? 1 : -1;
-            dirY = (closestPlayer.y > y) ? 1 : -1;
+
+            // Vertical: maintain offset above player
+            var deltaY = (closestPlayer.y + verticalOffset) - y;
+            if (abs(deltaY) > 5) dirY = (deltaY > 0) ? 1 : -1;
         }
     }
 
-    /// === Horizontal movement ===
+    /// === HORIZONTAL MOVEMENT ===
     if (dirX != 0) {
         hsp += dirX * acceleration;
     } else {
@@ -79,7 +85,7 @@ if (closestPlayer != noone) {
         if (sign(hsp) != signHsp) hsp = 0;
     }
 
-    /// === Vertical movement ===
+    /// === VERTICAL MOVEMENT ===
     if (dirY != 0) {
         vsp += dirY * acceleration;
     } else {
@@ -88,26 +94,21 @@ if (closestPlayer != noone) {
         if (sign(vsp) != signVsp) vsp = 0;
     }
 
-    /// === Clamp speeds ===
+    /// === CLAMP SPEEDS ===
     hsp = clamp(hsp, -maxSpeed, maxSpeed);
     vsp = clamp(vsp, -maxSpeed, maxSpeed);
 
-    /// === Collision with walls ===
+    /// === WALL COLLISION ===
     if (place_meeting(x + hsp, y, oWall)) {
-        while (!place_meeting(x + sign(hsp), y, oWall)) {
-            x += sign(hsp);
-        }
+        while (!place_meeting(x + sign(hsp), y, oWall)) x += sign(hsp);
         hsp = 0;
     }
-
     if (place_meeting(x, y + vsp, oWall)) {
-        while (!place_meeting(x, y + sign(vsp), oWall)) {
-            y += sign(vsp);
-        }
+        while (!place_meeting(x, y + sign(vsp), oWall)) y += sign(vsp);
         vsp = 0;
     }
 
-    /// === Apply movement ===
+    /// === APPLY MOVEMENT ===
     x += hsp;
     y += vsp;
 
@@ -118,11 +119,6 @@ if (closestPlayer != noone) {
 }
 
 /// === HOVER EFFECT ===
-// Use instance-local hover time so multiple enemies don’t sync
-
-
-if !place_meeting(x,y,oPlayer){
 if (!variable_instance_exists(id, "hoverTime")) hoverTime = irandom(1000);
 hoverTime += hoverSpeed;
 y += sin(hoverTime) * hoverAmplitude * 0.1;
-}

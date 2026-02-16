@@ -6,17 +6,21 @@ if (instance_exists(oScreenPause)) {
     image_speed = 1;
 }
 
-/// === Constants ===
-var acceleration   = 0.2;
+/// === CONSTANTS ===
+var acceleration   = 0.2;     // Horizontal acceleration
+var verticalAccel  = 0.1;     // Vertical acceleration (slower for smooth float)
 var deceleration   = 0.25;
-var maxSpeed       = 2;
-var pursueDistance = 600;
+var maxSpeed       = 4;
+var pursueDistance = 700;
+var verticalOffset = -250;    // Stay above player
+var hoverAmplitude = 4;       // Vertical bobbing height
+var hoverSpeed     = 0.1;    // Hover motion speed
 
-/// === Local Vars ===
+/// === LOCAL VARIABLES ===
 var closestPlayer = noone;
-var closestDist = 999999;
+var closestDist   = 999999;
 
-/// Find closest player
+/// === FIND CLOSEST PLAYER ===
 with (oPlayer) {
     var dist = point_distance(x, y, other.x, other.y);
     if (dist < closestDist) {
@@ -25,7 +29,7 @@ with (oPlayer) {
     }
 }
 
-// If there is a player
+/// === IF PLAYER EXISTS ===
 if (closestPlayer != noone) {
 
     /// === COLLISION WITH PLAYER ===
@@ -50,17 +54,22 @@ if (closestPlayer != noone) {
         }
     }
 
-    /// === Determine direction toward closest player ===
+    /// === DETERMINE MOVEMENT DIRECTION ===
     var dirX = 0;
     var dirY = 0;
+
     if (closestDist <= pursueDistance) {
         if (collision_line(x, y, closestPlayer.x, closestPlayer.y, oWall, true, false) == noone) {
+            // Horizontal: chase player
             dirX = (closestPlayer.x > x) ? 1 : -1;
-            dirY = (closestPlayer.y > y) ? 1 : -1;
+
+            // Vertical: maintain offset above player
+            var deltaY = (closestPlayer.y + verticalOffset) - y;
+            if (abs(deltaY) > 5) dirY = (deltaY > 0) ? 1 : -1;
         }
     }
 
-    /// === Horizontal movement ===
+    /// === HORIZONTAL MOVEMENT ===
     if (dirX != 0) {
         hsp += dirX * acceleration;
     } else {
@@ -69,35 +78,30 @@ if (closestPlayer != noone) {
         if (sign(hsp) != signHsp) hsp = 0;
     }
 
-    /// === Vertical movement ===
+    /// === VERTICAL MOVEMENT ===
     if (dirY != 0) {
-        vsp += dirY * acceleration;
+        vsp += dirY * verticalAccel;
     } else {
         var signVsp = sign(vsp);
         vsp -= signVsp * deceleration;
         if (sign(vsp) != signVsp) vsp = 0;
     }
 
-    /// === Clamp speeds ===
+    /// === CLAMP SPEEDS ===
     hsp = clamp(hsp, -maxSpeed, maxSpeed);
     vsp = clamp(vsp, -maxSpeed, maxSpeed);
 
-    /// === Collision with walls ===
+    /// === WALL COLLISION ===
     if (place_meeting(x + hsp, y, oWall)) {
-        while (!place_meeting(x + sign(hsp), y, oWall)) {
-            x += sign(hsp);
-        }
+        while (!place_meeting(x + sign(hsp), y, oWall)) x += sign(hsp);
         hsp = 0;
     }
-
     if (place_meeting(x, y + vsp, oWall)) {
-        while (!place_meeting(x, y + sign(vsp), oWall)) {
-            y += sign(vsp);
-        }
+        while (!place_meeting(x, y + sign(vsp), oWall)) y += sign(vsp);
         vsp = 0;
     }
 
-    /// === Apply movement ===
+    /// === APPLY MOVEMENT ===
     x += hsp;
     y += vsp;
 
@@ -106,3 +110,8 @@ if (closestPlayer != noone) {
     hsp = 0;
     vsp = 0;
 }
+
+/// === HOVER EFFECT ===
+if (!variable_instance_exists(id, "hoverTime")) hoverTime = irandom(1000);
+hoverTime += hoverSpeed;
+y += sin(hoverTime) * hoverAmplitude * 0.1;

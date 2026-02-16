@@ -39,7 +39,7 @@ if (closestPlayer != noone) {
         closestPlayer.hsp = -hsp;
         screenshake(5,5);
         closestPlayer.flash = 4;
-        closestPlayer.hp -= 10;
+        closestPlayer.hp -= 25;
         instance_create_layer(x, y, "Player", oHitstop);
 
         if (!audio_is_playing(sndHurt)) {

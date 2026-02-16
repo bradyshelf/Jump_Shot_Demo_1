@@ -8,6 +8,16 @@ function PlayerStateFree(){
 		slope = false;
 	}
 	if hp <= 0{		
+		  if (!audio_is_playing(sndDead)) {
+                var pitch = random_range(0.8, 1.2);
+                var sid = audio_play_sound(sndDead, 1, false);
+                audio_sound_pitch(sid, pitch);
+            }
+					  if (!audio_is_playing(sndHurt)) {
+                var pitch = random_range(0.8, 1.2);
+                var sid = audio_play_sound(sndHurt, 1, false);
+                audio_sound_pitch(sid, pitch);
+            }
 		instance_destroy();
 	}	
 var accel = 1;  // Acceleration rate
@@ -44,7 +54,7 @@ if (hascontrol) {
     var key_right_kb  = keyboard_check(ord("D"));
     var key_jump_kb   = keyboard_check(vk_space) || keyboard_check_pressed(ord("W"));
     var key_down_kb   = keyboard_check(ord("S"));
-    var key_roll_kb   = keyboard_check(ord("S")); // Roll with S (hold down)
+    var key_roll_kb   = keyboard_check(ord("E")); // Roll with S (hold down)
     var key_kick_kb   = keyboard_check_pressed(ord("E")); // Kick
     var key_gp_kb     = keyboard_check_pressed(ord("E")) && keyboard_check(ord("S")); // E + Down = Ground Pound
 	var key_pause_kb     = keyboard_check_pressed(vk_escape);//pause
@@ -63,7 +73,7 @@ if playerid == 2	{
     var key_right_kb  = keyboard_check(vk_right);
     var key_jump_kb   = keyboard_check(vk_up);
     var key_down_kb   = keyboard_check(vk_down);
-    var key_roll_kb   = keyboard_check(vk_down); // Roll with S (hold down)
+    var key_roll_kb   = keyboard_check(ord("M")); // Roll with S (hold down)
     var key_kick_kb   = keyboard_check_pressed(ord("M")); // Kick
     var key_gp_kb     = keyboard_check_pressed(ord("M")) && keyboard_check(vk_down); // E + Down = Ground Pound
 	var key_pause_kb     = keyboard_check_pressed(vk_escape);//pause
@@ -84,19 +94,10 @@ if (key_pause)&& !instance_exists(oPauseScreen){
 }
 
 
-// ======= ROLL START =======
-if (!is_rolling && (place_meeting(x, y + 20, oWall)||place_meeting(x, y + 20, oSlope) ) && key_roll && abs(hsp) >= roll_threshold) {
-    is_rolling = true;
-    roll_speed = hsp*2;        // inherit current momentum
-    roll_direction = sign(hsp); // lock direction
-    sprite_index = roll;
-    image_index = 0;
-    image_speed = 1;
-}
 
 // ======= ROLLING =======
 // ======= START ROLL =======
-if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, oSlope)) && key_roll && abs(hsp) >= roll_threshold) {
+if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, oSlope)) && key_roll && abs(hsp) >= roll_threshold && !groundpounding) {
     is_rolling = true;
     roll_speed = hsp * 2;          // inherit momentum
     roll_direction = sign(hsp);    // lock direction
@@ -107,221 +108,134 @@ if (!is_rolling && (place_meeting(x, y + 20, oWall) || place_meeting(x, y + 20, 
 
 // ======= ROLLING LOGIC =======
 if (is_rolling) {
-	
-	if (key_left) {
-    roll_speed -= accel/3; //Accelerate
-} if (key_right) {
-    roll_speed += accel/3; //Accelerate
-}
-mask_index = sRoll;
+
+    // === INPUT ACCELERATION ===
+    if (key_left)  roll_speed -= accel / 3;
+    if (key_right) roll_speed += accel / 3;
+
+    mask_index = sRoll;
+
     // ======= APPLY GRAVITY =======
     vsp += grv;
 
-    // Vertical collision (falling)
-    if (vsp > 0) {
-        if (place_meeting(x, y + vsp, oWall)) {
-            while (!place_meeting(x, y + 1, oWall)) {
-                y += 1;
+    // === VERTICAL COLLISIONS ===
+    if (vsp != 0) {
+        var step = sign(vsp);
+        var remaining = abs(vsp);
+        while (remaining > 0) {
+            if (!place_meeting(x, y + step, oWall)) {
+                y += step;
+            } else {
+                vsp = 0;
+                break;
             }
-            vsp = 0;
-        } else {
-            y += vsp;
-        }
-    }
-    // Vertical collision (rising)
-    else if (vsp < 0) {
-        if (place_meeting(x, y + vsp, oWall)) {
-            while (!place_meeting(x, y - 1, oWall)) {
-                y -= 1;
-            }
-            vsp = 0;
-        } else {
-            y += vsp;
+            remaining -= 1;
         }
     }
 
-    // ======= HORIZONTAL ROLL MOVEMENT (Slope-Aware) =======
+    // ======= HORIZONTAL ROLL MOVEMENT (Slope-Aware, Safe) =======
     var target_x = x + roll_speed;
     var target_y = y;
 
-    // Slope adjustment at the target position
+    // Slope adjustment
     if (place_meeting(target_x, target_y + 1, oSlope)) {
-        while (place_meeting(target_x, target_y, oSlope)) {
-            target_y -= 1; // move up until not inside slope
+        while (place_meeting(target_x, target_y, oSlope) && target_y > 0) {
+            target_y -= 1;
         }
     }
 
-    // Wall collision at slope-adjusted position
-    if (place_meeting(target_x, target_y, oWall)) {
-        // Move as close as possible
-        while (!place_meeting(x + roll_direction, y, oWall)) {
-            x += roll_direction;
+    // Horizontal collision (incremental)
+    var move_dir = sign(roll_speed);
+    var move_amt = abs(roll_speed);
+    var moved = 0;
+    while (moved < move_amt) {
+        if (!place_meeting(x + move_dir, target_y, oWall)) {
+            x += move_dir;
+        } else {
+            // Bounce off wall safely
+            roll_speed = -roll_speed * 0.5; // bounce back a little
+            break;
         }
-        hsp = 0;
-        roll_speed = 0;
-        is_rolling = false;
-		mask_index = sIdle;
-    } else {
-        // Commit movement
-        x = target_x;
-        y = target_y;
-        hsp = roll_speed;
+        moved += 1;
+    }
+    y = target_y;
+    hsp = roll_speed;
+
+    // ======= ENEMY COLLISION (Safe Increment) =======
+    var hsign = sign(hsp);
+    if (place_meeting(x + hsign, y, enemyplayer)) {
+        x += 0; // don't move into enemy
+        roll_speed = -hsp * 0.5;
+        enemyplayer.hsp = -hsp * 0.5;
     }
 
-    // ======= ENEMY COLLISION =======
-    if (place_meeting(x + hsp, y, enemyplayer)) {
-        while (!place_meeting(x + sign(hsp), y, enemyplayer)) {
-            x += sign(hsp);
+    if (place_meeting(x + hsign, y, oEnemy)) {
+        x += 0;
+        roll_speed = -hsp * 0.5;
+        oEnemy.hsp = -oEnemy.hsp;
+    }
+
+    // ======= SOUND HIT CHECKS (simplified) =======
+    var enemy_offsets = [-20, 20];
+    for (var i = 0; i < 2; i++) {
+        var ex = enemy_offsets[i];
+        if (place_meeting(x + ex, y, oEnemy)) {
+            if (!audio_is_playing(sndThud)) {
+                var pitch = random_range(0.8, 1.2);
+                var sid = audio_play_sound(sndThud, 1, false);
+                audio_sound_pitch(sid, pitch);
+            }
+            if (!audio_is_playing(sndPunch)) {
+                var pitch = random_range(0.8, 1.2);
+                var sid = audio_play_sound(sndPunch, 1, false);
+                audio_sound_pitch(sid, pitch);
+            }
         }
-        roll_speed = -hsp;
-        enemyplayer.hsp = -hsp;
     }
-   if (place_meeting(x + hsp, y, oEnemy)) {
-        while (!place_meeting(x + sign(hsp), y, oEnemy)) {
-            x += sign(hsp);
+
+    // ======= ENEMY DAMAGE =======
+    if (roll_speed != 0) {
+        var hit_types = [oEnemyMelee, oEnemyJumper, oEnemyProjectile];
+        for (var i = 0; i < array_length(hit_types); i++) {
+            for (var dir = -1; dir <= 1; dir += 2) {
+                var hit_inst = instance_place(x + 20 * dir, y, hit_types[i]);
+                if (hit_inst != noone) {
+                    with (hit_inst) {
+                        flash = 4;
+                        hp--;
+                    }
+                    instance_create_layer(x, y, "Player", oHitstop);
+                    screenshake(5, 5);
+                }
+            }
         }
-		oEnemy.hsp = -oEnemy.hsp;
-
-        roll_speed = -hsp;
-     
     }
-	
-	
-	
-		if place_meeting(x+20, y, oEnemy){
-	 if !audio_is_playing(sndThud){
-	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
-    var snd_id = audio_play_sound(sndThud, 1, false);
-    audio_sound_pitch(snd_id, pitch);
-	 }
-	}
-	if place_meeting(x-20, y, oEnemy){
-		 if !audio_is_playing(sndThud){
-	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
-    var snd_id = audio_play_sound(sndThud, 1, false);
-    audio_sound_pitch(snd_id, pitch);
-	 }
-	}
-	//Enemy Roll Damage
-// ==== ENEMY MELEE ====
-if roll_speed != 0{
-var melee_hit_right = instance_place(x + 20, y, oEnemyMelee) ;
-if (melee_hit_right != noone) {
-    with (melee_hit_right) {
-        flash = 4;
-        hp--;
+
+    // ======= BOSS PHASE COLLISIONS =======
+    var boss_offsets = [-20, 20];
+    for (var i = 0; i < 2; i++) {
+        var off = boss_offsets[i];
+        if (place_meeting(x + off, y, oBossPhaseProjectile)) {
+            instance_create_layer(x, y, "Player", oHitstop);
+            screenshake(5,5);
+            oBossPhaseProjectile.flash = 4;
+            oBossCollision.hp--;
+        }
+        if (place_meeting(x + off, y, oBossPhaseMelee)) {
+            instance_create_layer(x, y, "Player", oHitstop);
+            screenshake(5,5);
+            oBossPhaseMelee.flash = 4;
+            oBossCollision.hp--;
+        }
     }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
 
-var melee_hit_left = instance_place(x - 20, y, oEnemyMelee);
-if (melee_hit_left != noone) {
-    with (melee_hit_left) {
-        flash = 4;
-        hp--;
-    }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
-
-
-// ==== ENEMY JUMPER ====
-var jumper_hit_right = instance_place(x + 20, y, oEnemyJumper);
-if (jumper_hit_right != noone) {
-    with (jumper_hit_right) {
-        flash = 4;
-        hp--;
-    }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
-
-var jumper_hit_left = instance_place(x - 20, y, oEnemyJumper);
-if (jumper_hit_left != noone) {
-    with (jumper_hit_left) {
-        flash = 4;
-        hp--;
-    }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
-
-
-// ==== ENEMY PROJECTILE ====
-var proj_hit_right = instance_place(x + 20, y, oEnemyProjectile);
-if (proj_hit_right != noone) {
-    with (proj_hit_right) {
-        flash = 4;
-        hp--;
-    }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
-
-var proj_hit_left = instance_place(x - 20, y, oEnemyProjectile);
-if (proj_hit_left != noone) {
-    with (proj_hit_left) {
-        flash = 4;
-        hp--;
-    }
-    instance_create_layer(x, y, "Player", oHitstop);
-    screenshake(5, 5);
-}
-
-	
-	//
-				if place_meeting(x+20, y, oBossPhaseProjectile){
-		instance_create_layer(x,y,"Player",oHitstop);
-		screenshake(5,5);
-		oBossPhaseProjectile.flash =4
-		oBossCollision.hp--;
-	}
-	if place_meeting(x-20, y, oBossPhaseProjectile){
-		instance_create_layer(x,y,"Player",oHitstop);
-		screenshake(5,5);
-		oBossPhaseProjectile.flash =4
-		oBossCollision.hp--;
-	}
-	
-			if place_meeting(x+20, y, oBossPhaseMelee){
-		instance_create_layer(x,y,"Player",oHitstop);
-		screenshake(5,5);
-		oBossPhaseMelee.flash =4
-		oBossCollision.hp--;
-	}
-	if place_meeting(x-20, y, oBossPhaseProjectile){
-		instance_create_layer(x,y,"Player",oHitstop);
-		screenshake(5,5);
-		oBossPhaseMelee.flash =4
-		oBossCollision.hp--;
-	}
-}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    // ======= SLOPE FLAG =======
+    // ======= SLOPE ADJUSTMENT =======
     slope = place_meeting(x, y + 1, oSlope);
     if (slope) SlopeAdjust2();
-	
-if place_meeting(x, y + 1, oSlopeR){
 
-		roll_speed += grv
-	
-	
-}
-if place_meeting(x, y + 1, oSlopeL){
+    if (place_meeting(x, y + 1, oSlopeR)) roll_speed += grv * 3;
+    if (place_meeting(x, y + 1, oSlopeL)) roll_speed -= grv * 3;
 
-		roll_speed +=  -grv
-	
-	
-}
     // ======= DECELERATION =======
     if (roll_speed > 0) {
         roll_speed -= roll_decel;
@@ -331,20 +245,32 @@ if place_meeting(x, y + 1, oSlopeL){
         if (roll_speed > 0) roll_speed = 0;
     }
 
-    // ======= CANCEL ROLL =======
+    // ======= CANCEL ROLL / JUMP / GROUND POUND =======
     if (key_jump) {
         is_rolling = false;
-        vsp = -20; // jump normally
-		mask_index = sIdle;
+        vsp = -20;
+        mask_index = sIdle;
     }
+
+    if (key_kick && key_down && !is_kicking)|| key_gp && !is_kicking {
+        is_rolling = false;
+        is_kicking = true;
+        groundpounding = true;
+        sprite_index = groundpound;
+        vsp +=   22;
+		        mask_index = sIdle;
+    }
+	
+
+
     if (!key_roll) {
         is_rolling = false;
-		mask_index = sIdle;
+        mask_index = sIdle;
     }
 
     // ======= UPDATE SPRITE =======
     sprite_index = roll;
-    image_speed = abs(hsp) / 8;
+    image_speed = max(0.1, abs(hsp) / 8); // never freeze animation
 }
 
 
@@ -662,12 +588,22 @@ if (is_kicking) {
 			   
 			   
 		if (!hitstop_active && place_meeting(x+20, y, oEnemy)) {
-
+ if !audio_is_playing(sndPunch){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndPunch, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
+	 
 }
  
 // Check for enemy collision to the left
 if (!hitstop_active && place_meeting(x-20, y, oEnemy)) {
-
+ if !audio_is_playing(sndPunch){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndPunch, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
+	 
 }
 	   
 			   // Check for enemy collision to the right
@@ -852,9 +788,18 @@ if (hitstop_active) {
     if (groundpounding) {
 		
 	 if ( place_meeting(x, y + 20, oEnemy)) {
-
+ if !audio_is_playing(sndPunch){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndPunch, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
+	  if !audio_is_playing(sndSlam){
+	  var pitch = random_range(0.8, 1.2); // Slightly vary the pitch
+    var snd_id = audio_play_sound(sndSlam, 1, false);
+    audio_sound_pitch(snd_id, pitch);
+	 }
         screenshake(vsp/3,vsp/3);
-        vsp = -min(vsp*1, 37);
+        vsp = -min(vsp*.75, 35);
 	
 		
 		is_kicking= false;
@@ -994,6 +939,7 @@ if (hsp != 0) image_xscale = sign(hsp) *-3;
 if (place_meeting(x + 1, y, oWall) || place_meeting(x - 1, y, oWall))  {
     // Reduce horizontal speed to half to make jump easier? maybe take this out well see
     //hsp *= 0.5;
+	can_dash = true;
 	sprite_index = wallslide; // wall jump sprite
     // Accelerate vertical speed from 0 to 1 gradually
     if (vsp <= vsp + grv) { 

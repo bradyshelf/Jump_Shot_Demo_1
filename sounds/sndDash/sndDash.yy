@@ -22,5 +22,5 @@
   "resourceVersion":"2.0",
   "sampleRate":44100,
   "soundFile":"sndDash.mp3",
-  "volume":0.14,
+  "volume":0.07,
 }

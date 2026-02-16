@@ -1,3 +1,4 @@
+instance_destroy(oBossGun);
 timer-= 1;
 if timer <= 0 {
 	instance_change(oBossPhaseProjectile,true);

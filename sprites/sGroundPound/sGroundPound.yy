@@ -19,6 +19,7 @@
   "height":64,
   "HTile":false,
   "layers":[
+    {"$GMImageLayer":"","%Name":"a8531e9c-2ea8-40f9-97fe-0554e76eba22","blendMode":0,"displayName":"Layer 2","isLocked":false,"name":"a8531e9c-2ea8-40f9-97fe-0554e76eba22","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
     {"$GMImageLayer":"","%Name":"35dcb712-385b-4834-8676-c98d42f45c81","blendMode":0,"displayName":"Layer 1","isLocked":false,"name":"35dcb712-385b-4834-8676-c98d42f45c81","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"sGroundPound",

@@ -1,3 +1,4 @@
+hasKey=false;
 hitstop_active = false; // Prevent repeated hitstops
 hitstop_timer = 0;      // Optional: for timing duration
 
@@ -42,7 +43,7 @@ last_hdir = 1; // Default facing right
 state = PlayerStateFree;
 //MOVEMENT//
 groundpound_has_hit = false;
-hit = sHit;
+
 run = sRun_1
 jump = sJump_1
 kick = sDash_1

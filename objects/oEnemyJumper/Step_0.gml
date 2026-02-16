@@ -2,7 +2,7 @@
 var acceleration = 1;
 var deceleration = 0.5;
 var maxSpeed = 3;
-var pursueDistance = 400;
+var pursueDistance = 600;
 var jumpSpeed = -7;
 var wallJumpSpeed = -10;
 var wallJumpOutwardSpeed = 7;
@@ -47,7 +47,7 @@ if closestPlayer != noone {
 
         closestPlayer.hsp = -hsp*2;
         closestPlayer.flash = 4;
-        closestPlayer.hp -= 2;
+        closestPlayer.hp -= 10;
         instance_create_layer(x, y, "Player", oHitstop);
 
         if !audio_is_playing(sndHurt) {

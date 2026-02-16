@@ -20,6 +20,7 @@
   "height":64,
   "HTile":false,
   "layers":[
+    {"$GMImageLayer":"","%Name":"b18f25e8-3570-4000-a99a-a2054273fe6c","blendMode":0,"displayName":"Layer 1","isLocked":false,"name":"b18f25e8-3570-4000-a99a-a2054273fe6c","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
     {"$GMImageLayer":"","%Name":"898a0f65-967d-40c3-a61b-2222708eaea6","blendMode":0,"displayName":"default","isLocked":false,"name":"898a0f65-967d-40c3-a61b-2222708eaea6","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"sJump",
