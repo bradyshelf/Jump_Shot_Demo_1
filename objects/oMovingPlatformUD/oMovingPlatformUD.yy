@@ -34,8 +34,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sTemp",
-    "path":"sprites/sTemp/sTemp.yy",
+    "name":"sBench",
+    "path":"sprites/sBench/sBench.yy",
   },
   "spriteMaskId":null,
   "visible":true,

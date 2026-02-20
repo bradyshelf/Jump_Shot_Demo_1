@@ -1,5 +1,5 @@
 // --- ALIGNMENT SETTINGS ---
-draw_set_halign(fa_left);  // We'll center manually
+draw_set_halign(fa_center);  // We'll center manually
 draw_set_valign(fa_middle);
 
 // --- SCREEN CENTER (GUI) ---
@@ -33,7 +33,7 @@ for (var i = 0; i < menu_items; i++)
     // --- POSITION CALCULATION ---
     var yy = start_y + i * (menu_itemheight + menu_padding);
     var text_width = string_width(txt);
-    var xx = screen_center_x - (text_width / 2) + 5; // Manual centering
+    var xx = screen_center_x-20; // Manual centering
 
     // --- BACKDROP SHADOW ---
     draw_set_color(make_color_rgb(0,0,0));

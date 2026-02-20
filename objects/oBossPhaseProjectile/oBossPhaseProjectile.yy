@@ -11,8 +11,8 @@
   "name":"oBossPhaseProjectile",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Enemies",
+    "path":"folders/Enemies.yy",
   },
   "parentObjectId":{
     "name":"oEnemy",
@@ -36,9 +36,12 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sBossAttack2",
-    "path":"sprites/sBossAttack2/sBossAttack2.yy",
+    "name":"sBossPhase1Attack",
+    "path":"sprites/sBossPhase1Attack/sBossPhase1Attack.yy",
   },
-  "spriteMaskId":null,
+  "spriteMaskId":{
+    "name":"sBossPhase1Idle",
+    "path":"sprites/sBossPhase1Idle/sBossPhase1Idle.yy",
+  },
   "visible":true,
 }

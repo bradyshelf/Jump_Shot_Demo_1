@@ -11,8 +11,8 @@
   "name":"oBossPhaseMelee",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Enemies",
+    "path":"folders/Enemies.yy",
   },
   "parentObjectId":{
     "name":"oEnemy",
@@ -36,9 +36,12 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sBossAttack1",
-    "path":"sprites/sBossAttack1/sBossAttack1.yy",
+    "name":"sBossPhase1Idle",
+    "path":"sprites/sBossPhase1Idle/sBossPhase1Idle.yy",
   },
-  "spriteMaskId":null,
+  "spriteMaskId":{
+    "name":"sBossPhase1Idle",
+    "path":"sprites/sBossPhase1Idle/sBossPhase1Idle.yy",
+  },
   "visible":true,
 }

@@ -19,8 +19,11 @@
   "height":192,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"0fc9991d-0d8d-490d-804f-57001f2f7261","blendMode":0,"displayName":"Layer 3","isLocked":false,"name":"0fc9991d-0d8d-490d-804f-57001f2f7261","opacity":24.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
-    {"$GMImageLayer":"","%Name":"06b5551b-0c50-4d65-aeb8-4d7e0e559303","blendMode":0,"displayName":"Layer 2","isLocked":false,"name":"06b5551b-0c50-4d65-aeb8-4d7e0e559303","opacity":13.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"06b5551b-0c50-4d65-aeb8-4d7e0e559303","blendMode":0,"displayName":"Layer 2","isLocked":false,"name":"06b5551b-0c50-4d65-aeb8-4d7e0e559303","opacity":16.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"e6a56c23-d8c7-499e-a664-79301775158b","blendMode":0,"displayName":"Layer 3","isLocked":false,"name":"e6a56c23-d8c7-499e-a664-79301775158b","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"8e992191-a535-40f2-84b5-56d107489951","blendMode":0,"displayName":"Layer 5","isLocked":false,"name":"8e992191-a535-40f2-84b5-56d107489951","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"c57aa493-b4a9-4946-83d7-428c06b194d3","blendMode":0,"displayName":"Layer 6","isLocked":false,"name":"c57aa493-b4a9-4946-83d7-428c06b194d3","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"7ed1b3ed-3068-4acd-ba17-ec167fc0401d","blendMode":0,"displayName":"Layer 4","isLocked":false,"name":"7ed1b3ed-3068-4acd-ba17-ec167fc0401d","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
     {"$GMImageLayer":"","%Name":"b89cffc8-ad05-4973-b1fc-74bf5c7fae35","blendMode":0,"displayName":"Layer 1","isLocked":false,"name":"b89cffc8-ad05-4973-b1fc-74bf5c7fae35","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"sWall1",

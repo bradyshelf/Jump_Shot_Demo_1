@@ -1,3 +1,5 @@
+// Player variables (create event)
+iframes = 0;
 hasKey=false;
 hitstop_active = false; // Prevent repeated hitstops
 hitstop_timer = 0;      // Optional: for timing duration
@@ -7,6 +9,7 @@ if hascontrol == false {
 		gamepad_index = -1
 	
 }
+
 if gamepad_is_connected(4) && gamepad_is_connected(0){
 	gamepad_index = 0
 		hascontrol = true
@@ -20,6 +23,8 @@ if gamepad_is_connected(1) && gamepad_is_connected(0){
 	gamepad_index = 0
 	hascontrol = true
 } 
+
+
 can_dash = true;
 has_dashed=false
 playerid=1

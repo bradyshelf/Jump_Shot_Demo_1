@@ -22,7 +22,7 @@
   "height":64,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"361f2237-b416-4d77-aa14-5ab689cfc444","blendMode":0,"displayName":"default","isLocked":false,"name":"361f2237-b416-4d77-aa14-5ab689cfc444","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"5f6a8731-3de5-4a5b-be80-91d04495bd43","blendMode":0,"displayName":"default (2)","isLocked":false,"name":"5f6a8731-3de5-4a5b-be80-91d04495bd43","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"sHitSpark",
   "nineSlice":null,

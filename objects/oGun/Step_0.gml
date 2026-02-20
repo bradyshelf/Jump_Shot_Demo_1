@@ -34,6 +34,19 @@ if instance_exists(oScreenPause) {
             if (burstTimer <= 0) {
                 // Fire a bullet
                 with (instance_create_layer(x, y, "bullets", oEnemyBullet)) {
+					
+					        if (!audio_is_playing(sndBatSpit)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndBatSpit, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+		
+		
+			    if (!audio_is_playing(sndFart)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndFart, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
                     speed = 10;
                     direction = other.image_angle + random_range(-1, 1);
                     image_angle = direction;

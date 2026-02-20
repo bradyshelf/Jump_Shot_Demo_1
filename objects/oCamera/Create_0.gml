@@ -1,5 +1,4 @@
 
-
 p1 = oPlayer1
 p2= oPlayer2
 cam = view_camera[0];

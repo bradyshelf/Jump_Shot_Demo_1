@@ -1,11 +1,8 @@
 
-
-window_set_fullscreen(true);
 last_hovered = -1
 
 #macro SAVEFILE "Save.sav"
 
-global.fullscreen = true;
 
 gui_height = display_get_gui_height();
 gui_width = display_get_gui_width();

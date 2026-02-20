@@ -1,6 +1,4 @@
 
-
-window_set_fullscreen(true);
 last_hovered = -1
 
 

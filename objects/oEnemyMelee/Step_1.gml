@@ -1,6 +1,11 @@
 if (hp <= 0)
 {
-	
+	 if (!audio_is_playing(sndZombie)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndZombie, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+		
 	
 //	if !audio_is_playing(sndZombieDead){
 //		  var s1 = audio_play_sound(sndZombieDead, 0, false);
@@ -17,8 +22,7 @@ if (hp <= 0)
 	//	vsp = lengthdir_y(3,direction)-2;
 	//}
 	
-
-	instance_destroy();
+	instance_change(oDead, true);
 }
 
 

@@ -8,5 +8,9 @@
                 var sid = audio_play_sound(sndHurt, 1, false);
                 audio_sound_pitch(sid, pitch);
             }
-
-instance_destroy(oPlayer1);
+with oPlayer1{
+	instance_change(oDead, true);
+}
+if !instance_exists(oPlayer2){
+	room_restart();
+}

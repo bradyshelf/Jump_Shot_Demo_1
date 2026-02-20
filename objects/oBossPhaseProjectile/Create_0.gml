@@ -2,7 +2,7 @@ hsp = 4;
 vsp = 0;    
 walksp = 4; 
 
-timer= 600;
+timer= 800;
 
 grv = 0.25;
 

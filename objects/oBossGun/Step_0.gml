@@ -39,10 +39,41 @@ if instance_exists(oScreenPause) {
                 var base_angle = (burstCount * 10 * direction_flip) mod 360;
 
                 for (var i = 0; i < bullet_total; i++) {
+					
+					 if (!audio_is_playing(sndFogHorn)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndFogHorn, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+		
+		
+			    if (!audio_is_playing(sndPush)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndPush, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+					
+					
+			    if (!audio_is_playing(sndSpell)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndSpell, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+		
+				    if (!audio_is_playing(sndThunder)) {
+            var pitch = random_range(0.8, 1.2);
+            var snd_id = audio_play_sound(sndThunder, 1, false);
+            audio_sound_pitch(snd_id, pitch);
+        }
+				
+					
+					
+					
                     var dir = base_angle + i * angle_step;
 
                     var b = instance_create_layer(x, y, "bullets", oBossBullet);
                     if (b != noone) {
+	
                         var angleToPlayer = point_direction(x, y, closestPlayer.x, closestPlayer.y);
                         b.direction = dir + angleToPlayer;
                         b.speed = 5;
@@ -62,6 +93,7 @@ if instance_exists(oScreenPause) {
 
             } else {
                 burstTimer--;
+			
             }
         }
     }

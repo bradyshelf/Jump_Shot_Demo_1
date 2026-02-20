@@ -1,0 +1,2 @@
+playerone = false;
+playertwo = false;

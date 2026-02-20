@@ -11,8 +11,8 @@
   "name":"oEnemyMelee",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Enemies",
+    "path":"folders/Enemies.yy",
   },
   "parentObjectId":{
     "name":"oEnemy",
@@ -38,9 +38,12 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sTemp",
-    "path":"sprites/sTemp/sTemp.yy",
+    "name":"sZombieIdle",
+    "path":"sprites/sZombieIdle/sZombieIdle.yy",
   },
-  "spriteMaskId":null,
+  "spriteMaskId":{
+    "name":"sZombieIdle",
+    "path":"sprites/sZombieIdle/sZombieIdle.yy",
+  },
   "visible":true,
 }

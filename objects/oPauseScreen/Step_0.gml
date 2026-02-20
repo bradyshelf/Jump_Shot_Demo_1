@@ -20,7 +20,7 @@ menu_x += (menu_x_target - menu_x) / menu_speed;
 if (menu_control)
 {
     // === KEYBOARD / GAMEPAD NAVIGATION ===
-    if (keyboard_check_pressed(vk_up) || gamepad_button_check_pressed(0, gp_padu))
+    if (keyboard_check_pressed(vk_up) || gamepad_button_check_pressed(0, gp_face1) ||  gamepad_button_check_pressed(4, gp_face1))
     {
         menu_cursor--;
         if (menu_cursor < 0) menu_cursor = menu_items - 1;

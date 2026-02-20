@@ -28,7 +28,7 @@ var knockback_strength_y = 5; // Adjust the vertical knockback strength
 with (oPlayer2)
 {
 screenshake(2, 5);
-hp -= 10;
+hp -= 5;
 flash = 4;
 
     // Calculate new position

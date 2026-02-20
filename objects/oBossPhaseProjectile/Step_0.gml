@@ -1,5 +1,6 @@
 /// === TIMER & PHASE SWITCH ===
-timer -= 1;
+sprite_index = sBossPhase1Attack;
+timer -- ;
 if (timer <= 0) {
     instance_change(oBossPhaseMelee, true);
 }
@@ -13,13 +14,15 @@ if (instance_exists(oScreenPause)) {
 }
 
 /// === CONSTANTS ===
-var acceleration   = 1;      // Speed increase rate
-var deceleration   = 0.2;    // Slowdown rate
-var maxSpeed       = 1.25;   // Max movement speed
-var pursueDistance = 600;    // Distance to start pursuing
-var verticalOffset = -500;   // Stay above player
-var hoverAmplitude = 6;      // Vertical bobbing height
-var hoverSpeed     = 0.05;   // Speed of hover motion
+var hAcc       = 1.0;      // Horizontal acceleration
+var vAcc       = 3.0;      // Vertical acceleration (faster rise)
+var deceleration = 0.2;    // Slowdown rate
+var maxHSpeed  = 2.5;      // Max horizontal speed
+var maxVSpeed  = 6.0;      // Max vertical speed (faster rise)
+var pursueDistance = 800;  // Distance to start pursuing
+var verticalOffset = -450; // Stay above player
+var hoverAmplitude = 6;    // Vertical bobbing height
+var hoverSpeed     = 0.05; // Speed of hover motion
 
 /// === LOCAL VARIABLES ===
 var closestPlayer = noone;
@@ -37,6 +40,44 @@ with (oPlayer) {
 /// === IF PLAYER EXISTS ===
 if (closestPlayer != noone) {
 
+    /// === DETERMINE MOVEMENT DIRECTION ===
+    var dirX = 0;
+    var dirY = 0;
+
+    if (closestDist <= pursueDistance) {
+        // Check line of sight
+        if (collision_line(x, y, closestPlayer.x, closestPlayer.y, oWall, true, false) == noone) {
+            // Horizontal chase
+            dirX = (closestPlayer.x > x) ? 1 : -1;
+
+            // Vertical lift above player
+            var deltaY = (closestPlayer.y + verticalOffset) - y;
+            if (abs(deltaY) > 5) dirY = (deltaY > 0) ? 1 : -1;
+        }
+    }
+
+    /// === HORIZONTAL MOVEMENT ===
+    if (dirX != 0) {
+        hsp += dirX * hAcc;
+    } else {
+        var signHsp = sign(hsp);
+        hsp -= signHsp * deceleration;
+        if (sign(hsp) != signHsp) hsp = 0;
+    }
+
+    /// === VERTICAL MOVEMENT ===
+    if (dirY != 0) {
+        vsp += dirY * vAcc;
+    } else {
+        var signVsp = sign(vsp);
+        vsp -= signVsp * deceleration;
+        if (sign(vsp) != signVsp) vsp = 0;
+    }
+
+    /// === CLAMP SPEEDS ===
+    hsp = clamp(hsp, -maxHSpeed, maxHSpeed);
+    vsp = clamp(vsp, -maxVSpeed, maxVSpeed);
+
     /// === COLLISION WITH PLAYER ===
     if (place_meeting(x + hsp, y + vsp, closestPlayer)) {
         while (!place_meeting(x + sign(hsp), y + sign(vsp), closestPlayer)) {
@@ -50,8 +91,6 @@ if (closestPlayer != noone) {
         closestPlayer.vsp = -vsp;
 
         screenshake(5,5);
-        closestPlayer.flash = 4;
-        closestPlayer.hp -= 10;
         instance_create_layer(x, y, "Player", oHitstop);
 
         if (!audio_is_playing(sndHurt)) {
@@ -60,43 +99,6 @@ if (closestPlayer != noone) {
             audio_sound_pitch(snd_id, pitch);
         }
     }
-
-    /// === DETERMINE MOVEMENT DIRECTION ===
-    var dirX = 0;
-    var dirY = 0;
-
-    if (closestDist <= pursueDistance) {
-        if (collision_line(x, y, closestPlayer.x, closestPlayer.y, oWall, true, false) == noone) {
-            // Horizontal: chase player
-            dirX = (closestPlayer.x > x) ? 1 : -1;
-
-            // Vertical: maintain offset above player
-            var deltaY = (closestPlayer.y + verticalOffset) - y;
-            if (abs(deltaY) > 5) dirY = (deltaY > 0) ? 1 : -1;
-        }
-    }
-
-    /// === HORIZONTAL MOVEMENT ===
-    if (dirX != 0) {
-        hsp += dirX * acceleration;
-    } else {
-        var signHsp = sign(hsp);
-        hsp -= signHsp * deceleration;
-        if (sign(hsp) != signHsp) hsp = 0;
-    }
-
-    /// === VERTICAL MOVEMENT ===
-    if (dirY != 0) {
-        vsp += dirY * acceleration;
-    } else {
-        var signVsp = sign(vsp);
-        vsp -= signVsp * deceleration;
-        if (sign(vsp) != signVsp) vsp = 0;
-    }
-
-    /// === CLAMP SPEEDS ===
-    hsp = clamp(hsp, -maxSpeed, maxSpeed);
-    vsp = clamp(vsp, -maxSpeed, maxSpeed);
 
     /// === WALL COLLISION ===
     if (place_meeting(x + hsp, y, oWall)) {
@@ -121,4 +123,4 @@ if (closestPlayer != noone) {
 /// === HOVER EFFECT ===
 if (!variable_instance_exists(id, "hoverTime")) hoverTime = irandom(1000);
 hoverTime += hoverSpeed;
-y += sin(hoverTime) * hoverAmplitude * 0.1;
+y += sin(hoverTime) * hoverAmplitude * 0.5; // stronger hover

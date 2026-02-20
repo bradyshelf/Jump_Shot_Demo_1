@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sDoor",
-    "path":"sprites/sDoor/sDoor.yy",
+    "name":"sDoorKey",
+    "path":"sprites/sDoorKey/sDoorKey.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -1,7 +1,15 @@
 // Constants for acceleration, deceleration, and max speed
+
+if instance_exists(oScreenPause){
+	
+var acceleration = 0; // Acceleration rate
+var maxSpeed = 0; // Maximum horizontal speed
+}
+else{
+
 var acceleration = 2; // Acceleration rate
 var maxSpeed = 5; // Maximum horizontal speed
-
+}
 // Initialize move_direction if it doesn't exist
 if (!variable_instance_exists(id, "move_direction")) {
     move_direction = 1; // Default direction: 1 = right, -1 = left
@@ -40,7 +48,7 @@ if (place_meeting(x+sign(hsp), y, oPlayer1) ) {
 
 if (place_meeting(x, y-1, oPlayer2) ) {
 
-    oPPlayerNormal.x += hsp; 
+    oPlayer2.x += hsp; 
 }
 
 if (place_meeting(x+sign(hsp), y,oPlayer2) ) {

@@ -9,6 +9,6 @@ if (hp <= 0)
 	instance_destroy(oBossPhaseMelee);
 	instance_destroy(oBossPhaseProjectile);
 	instance_destroy(oBossGun);
-	instance_destroy(self);
+	instance_change(oWitchDead,true);
 }
 

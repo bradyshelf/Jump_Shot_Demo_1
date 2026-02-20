@@ -9,5 +9,10 @@
                 audio_sound_pitch(sid, pitch);
             }
 
+with oPlayer2{
+	instance_change(oDead, true);
+}
 
-instance_destroy(oPlayer2);
+if !instance_exists(oPlayer1){
+	room_restart();
+}

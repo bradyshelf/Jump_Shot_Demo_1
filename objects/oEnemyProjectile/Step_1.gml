@@ -9,6 +9,6 @@ if (hp <= 0)
 	
 instance_destroy(mygun);
 
-	instance_destroy();
+	instance_change(oDead, true);
 }
 
