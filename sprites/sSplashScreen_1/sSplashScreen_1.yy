@@ -1,10 +1,10 @@
 {
   "$GMSprite":"v2",
-  "%Name":"sSplashScreen",
+  "%Name":"sSplashScreen_1",
   "bboxMode":0,
-  "bbox_bottom":2684,
+  "bbox_bottom":1342,
   "bbox_left":0,
-  "bbox_right":3843,
+  "bbox_right":1921,
   "bbox_top":0,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -16,12 +16,12 @@
   ],
   "gridX":0,
   "gridY":0,
-  "height":2685,
+  "height":1343,
   "HTile":false,
   "layers":[
     {"$GMImageLayer":"","%Name":"804043d4-b1f0-4953-b972-950ca0394b03","blendMode":0,"displayName":"default","isLocked":false,"name":"804043d4-b1f0-4953-b972-950ca0394b03","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
-  "name":"sSplashScreen",
+  "name":"sSplashScreen_1",
   "nineSlice":null,
   "origin":0,
   "parent":{
@@ -71,7 +71,7 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"dd1022eb-b03a-4606-b936-8705fb6f946b","path":"sprites/sSplashScreen/sSplashScreen.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"dd1022eb-b03a-4606-b936-8705fb6f946b","path":"sprites/sSplashScreen_1/sSplashScreen_1.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
               },"Disabled":false,"id":"1b938d49-2c6d-4637-8b92-67c01fc97bb2","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
@@ -88,5 +88,5 @@
   },
   "type":0,
   "VTile":false,
-  "width":3844,
+  "width":1922,
 }

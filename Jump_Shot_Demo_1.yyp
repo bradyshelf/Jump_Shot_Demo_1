@@ -277,6 +277,7 @@
     {"id":{"name":"sSlope","path":"sprites/sSlope/sSlope.yy",},},
     {"id":{"name":"sSpikes","path":"sprites/sSpikes/sSpikes.yy",},},
     {"id":{"name":"sSplashBat","path":"sprites/sSplashBat/sSplashBat.yy",},},
+    {"id":{"name":"sSplashScreen_1","path":"sprites/sSplashScreen_1/sSplashScreen_1.yy",},},
     {"id":{"name":"sSplashScreen","path":"sprites/sSplashScreen/sSplashScreen.yy",},},
     {"id":{"name":"sSplashShoe","path":"sprites/sSplashShoe/sSplashShoe.yy",},},
     {"id":{"name":"sSplashWitch","path":"sprites/sSplashWitch/sSplashWitch.yy",},},

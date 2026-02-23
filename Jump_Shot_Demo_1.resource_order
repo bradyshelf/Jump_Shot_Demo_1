@@ -244,6 +244,7 @@
     {"name":"sSlope","order":9,"path":"sprites/sSlope/sSlope.yy",},
     {"name":"sSpikes","order":25,"path":"sprites/sSpikes/sSpikes.yy",},
     {"name":"sSplashBat","order":89,"path":"sprites/sSplashBat/sSplashBat.yy",},
+    {"name":"sSplashScreen_1","order":92,"path":"sprites/sSplashScreen_1/sSplashScreen_1.yy",},
     {"name":"sSplashScreen","order":4,"path":"sprites/sSplashScreen/sSplashScreen.yy",},
     {"name":"sSplashShoe","order":91,"path":"sprites/sSplashShoe/sSplashShoe.yy",},
     {"name":"sSplashWitch","order":90,"path":"sprites/sSplashWitch/sSplashWitch.yy",},

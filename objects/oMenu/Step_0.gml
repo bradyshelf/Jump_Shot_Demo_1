@@ -11,7 +11,7 @@ var snd_select = sndPush;
 // === MENU LAYOUT ===
 var spacing = menu_itemheight * 1.1;
 var total_height = spacing * menu_items;
-var start_y = (gui_h / 2) - (total_height / 2) + 40;
+var start_y = (gui_h / 2) - (total_height / 2) + 100;
 
 // === SMOOTH MENU MOVEMENT ===
 menu_x += (menu_x_target - menu_x) / menu_speed;
